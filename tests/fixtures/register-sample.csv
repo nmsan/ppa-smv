@@ -1,0 +1,13 @@
+,,,,,,,"PAST PUPILS' ASSOCIATION - SENANAYAKE CENTRAL COLLEGE, (NATIONAL SCHOOL), MADAMPE"
+,,,,,,,Membership Register
+** No one has paid Enrollment Fees yet
+#,Membership Number,Mmeber Cataegory,Data Filling,Membership Fee 2024,<Book No> - <Receipt No>,Onboarding Location,Timestamp,Full Name (Ex: Gamage Samitha Perera),Gender,Contact Number (Mobile),WhatsApp Number,NIC/Passport Number,Email ID,Permanent Address,Country of Residence,Date of Birth,School Admission Number,O/L Year,A/L Year
+1,M-001,Honorary,,,,,,Mr. Test Honorary,,,,,,,,,,,
+2,M-002,Annual,Hard Copy,Manual,12-345,,,Test Person Two,Male,077 123 4567,+94771234567,199812345678,TWO@Example.test,SHOULD NOT BE IMPORTED,Srilanka,1998-01-01,1234,2014,2017
+3,M-003,Annual,Google Form,Online,,,3/17/2024 10:15:00,Test Person Three,Female,0712345678,,981234567v,not-an-email,,ශ්‍රී ලංකාව,,,N/A,1994
+4,M-004,Annual,Both,Direct,,,,Test Person Four,,12345,,,,,Japan,,,1997/2000,
+5,M-005,Annual,Pending,,,,,Test Person Five,,,,,,,,,,2006,2003
+6,M-006,Annual,Hard Copy,,,,,Test Person Six,,,,199812345678,,,,,,2000,2013
+7,,,,,,,,,,,,,,,,,,,
+8,,,Hard Copy,,,,,Test Applicant Without Number,,0770000000,,,,,,,,2016,2019
+9,M-002,Annual,Hard Copy,,,,,Duplicate Number,,,,,,,,,,,

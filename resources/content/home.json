@@ -1,0 +1,50 @@
+{
+  "slides": [
+    {
+      "title": "Become a member",
+      "text": "Reconnect with your classmates and help Senanayake Central College grow.",
+      "cta": {
+        "label": "Join today",
+        "href": "/register"
+      },
+      "image": "/images/hero/students.jpg"
+    },
+    {
+      "title": "80 වසරක අභිමානය",
+      "text": "1946 – 2026 · සේනානායක මධ්‍ය විද්‍යාලය (ජාතික පාසල), මාදම්පේ",
+      "cta": {
+        "label": "Our history",
+        "href": "/college/history"
+      },
+      "image": "/images/brand/maroon-waves.jpg"
+    },
+    {
+      "title": "Support school projects",
+      "text": "Renovating the main building, the main gate and the swimming pool.",
+      "cta": {
+        "label": "See projects",
+        "href": "/projects"
+      },
+      "image": "/images/projects/main-building.jpg"
+    }
+  ],
+  "anniversary": {
+    "title": "80 වසරක අභිමානය...!",
+    "from": "1946-01-03",
+    "to": "2026-01-03"
+  },
+  "stats": [
+    {
+      "label": "Registered",
+      "value": 270
+    },
+    {
+      "label": "Members",
+      "value": 244
+    }
+  ],
+  "join": {
+    "title": "Join with us",
+    "text": "Stay connected with the latest college news, association updates, upcoming events and activities. Reconnect with your classmates and expand your network."
+  }
+}

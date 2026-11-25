@@ -1,0 +1,159 @@
+{
+  "title": "Office Bearers",
+  "basis": "In accordance with Sub-Clause 5.2 of the Constitution of the Past Pupils' Association of Madampe Senanayake Central College.",
+  "terms": [
+    {
+      "term": "2026/2027",
+      "elected": "Elected at the general meeting held on 28 December 2025.",
+      "officers": [
+        {
+          "role": "President",
+          "people": [
+            {
+              "name": "Mrs. Shiromani Pathirathne",
+              "note": "Principal of the school"
+            }
+          ]
+        },
+        {
+          "role": "Vice President",
+          "people": [
+            {
+              "name": "Mr. Duminda Thilakarathne",
+              "note": "A/L 1996"
+            }
+          ]
+        },
+        {
+          "role": "Secretary",
+          "people": [
+            {
+              "name": "Mr. Saminda Dilshan",
+              "note": "A/L 2001"
+            }
+          ]
+        },
+        {
+          "role": "Joint Secretaries",
+          "people": [
+            {
+              "name": "Mr. Manju Wijerathne",
+              "note": "A/L 1999"
+            },
+            {
+              "name": "Mrs. Umayangi Karunarathne",
+              "note": "A/L 1999"
+            }
+          ]
+        },
+        {
+          "role": "Treasurer",
+          "people": [
+            {
+              "name": "Mr. Mangala Alahakoon",
+              "note": "A/L 1998"
+            }
+          ]
+        }
+      ],
+      "committee": [
+        {
+          "name": "Mr. Sanjeewa Pradeep",
+          "note": "A/L 1997"
+        },
+        {
+          "name": "Mr. Nirosh Sanju",
+          "note": "A/L 2000"
+        },
+        {
+          "name": "Mr. Ruwan Widanpathirana",
+          "note": "A/L 2001"
+        },
+        {
+          "name": "Mr. Ravinda Ilangakoon",
+          "note": "A/L 1999"
+        },
+        {
+          "name": "Mr. Tharaka Mahawatta",
+          "note": "A/L 1997"
+        },
+        {
+          "name": "Mr. Indika Jayasinghe",
+          "note": null
+        },
+        {
+          "name": "Mr. Namal Kumarasinghe",
+          "note": "A/L 1998"
+        },
+        {
+          "name": "Mr. Sugath Sanjeewa",
+          "note": null
+        },
+        {
+          "name": "Mr. Samitha Hapuarachchi",
+          "note": null
+        },
+        {
+          "name": "Mr. Kasun Attanayake",
+          "note": "A/L 1998"
+        },
+        {
+          "name": "Mr. Saminda Harshaka",
+          "note": "A/L 2001"
+        },
+        {
+          "name": "Mrs. Nayomi Nirosha",
+          "note": "A/L 1998"
+        },
+        {
+          "name": "Mrs. Surangi Dinusha Liyanage",
+          "note": "A/L 1998"
+        },
+        {
+          "name": "Mrs. Shanika Kalamba Arachchige",
+          "note": "A/L 1997"
+        },
+        {
+          "name": "Mr. Yasas Praveen",
+          "note": "A/L 1997"
+        },
+        {
+          "name": "Mr. Asanka Nawarathne",
+          "note": "A/L 1997"
+        },
+        {
+          "name": "Mr. Mahinda Deshapriya",
+          "note": "A/L 1997"
+        },
+        {
+          "name": "Mr. Uditha Dilhani",
+          "note": "A/L 1997"
+        },
+        {
+          "name": "Mr. Bharatha Gunasinghe",
+          "note": "A/L 1997"
+        }
+      ],
+      "advisory": [
+        {
+          "role": "Consultants",
+          "people": [
+            {
+              "name": "Mr. S.M. Nimal",
+              "note": "A/L 1970"
+            }
+          ]
+        },
+        {
+          "role": "Internal Auditors",
+          "people": [
+            {
+              "name": "Eng. T.M. Shanaka H. Weerawardhana",
+              "note": "A/L 2002"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

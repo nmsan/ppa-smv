@@ -1,0 +1,42 @@
+{
+  "name": "Past Pupils' Association",
+  "school": "Senanayake Central College (National School), Madampe",
+  "school_si": "සේනානායක මධ්‍ය විද්‍යාලය (ජාතික පාසල), මාදම්පේ",
+  "founded": "1946-01-03",
+  "address": "Past Pupils' Association, Senanayake Central College (National School), Madampe.",
+  "email": "sncppa@gmail.com",
+  "facebook": "https://web.facebook.com/PPASENANAYAKE",
+  "contacts": [
+    {
+      "role": "Vice President",
+      "name": "Mr. Duminda Thilakarathne",
+      "note": "A/L 1996",
+      "phone": "071 186 4372",
+      "whatsapp": true,
+      "image": "/images/office-bearers/vice-president.jpg"
+    },
+    {
+      "role": "Secretary",
+      "name": "Mr. Saminda Dilshan",
+      "note": "A/L 2001",
+      "phone": "077 733 6460",
+      "whatsapp": true,
+      "image": "/images/office-bearers/secretary.jpg"
+    },
+    {
+      "role": "Treasurer",
+      "name": "Mr. Mangala Alahakoon",
+      "note": "A/L 1998",
+      "phone": "077 841 6164",
+      "whatsapp": false,
+      "image": "/images/office-bearers/treasurer.jpg"
+    }
+  ],
+  "bank": {
+    "note": "සියලුම අනුග්‍රාහක මුදල් සහ චෙක්පත් පහත සඳහන් ආදි ශිෂ්‍ය සංගමයේ නිල බැංකු ගිණුමට පමණක් යොමු කරන්න.",
+    "account_number": "1000 72 38 38",
+    "account_name": "PAST PUPILS' ASSOCIATION - S C C MADAMPE",
+    "bank": "Commercial Bank",
+    "branch": "Madampe"
+  }
+}

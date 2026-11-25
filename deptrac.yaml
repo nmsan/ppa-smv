@@ -1,0 +1,37 @@
+# Enforces the Clean Architecture dependency rule. Run: vendor/bin/deptrac
+deptrac:
+  paths:
+    - ./app
+  layers:
+    - name: Domain
+      collectors:
+        - type: directory
+          value: app/Domain/.*
+    - name: Application
+      collectors:
+        - type: directory
+          value: app/Application/.*
+    - name: Infrastructure
+      collectors:
+        - type: directory
+          value: app/Infrastructure/.*
+    - name: Http
+      collectors:
+        - type: directory
+          value: app/Http/.*
+    - name: Framework
+      collectors:
+        - type: classNameRegex
+          value: '#^(Illuminate|Inertia|Spatie|Symfony|Carbon)\\.*#'
+  ruleset:
+    Domain: ~
+    Application:
+      - Domain
+    Infrastructure:
+      - Application
+      - Domain
+      - Framework
+    Http:
+      - Application
+      - Domain
+      - Framework

@@ -1,0 +1,19 @@
+{
+  "items": [
+    {
+      "slug": "main-building",
+      "title": "Renovation of the school's main building",
+      "image": "/images/projects/main-building.jpg"
+    },
+    {
+      "slug": "main-gate",
+      "title": "Reconstruction of the main gate and front boundary wall",
+      "image": "/images/projects/main-gate.jpg"
+    },
+    {
+      "slug": "swimming-pool",
+      "title": "Rehabilitation of the swimming pool",
+      "image": "/images/projects/swimming-pool.jpg"
+    }
+  ]
+}
