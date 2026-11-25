@@ -56,19 +56,5 @@
         }
       ]
     }
-  ],
-  "fees": [
-    {
-      "name": "Annual member",
-      "sinhala": "ස්ථිර සාමාජික",
-      "amount": "Rs. 1,000.00",
-      "period": "per year"
-    },
-    {
-      "name": "Life member",
-      "sinhala": "යාවජීව සාමාජික",
-      "amount": "Rs. 15,000.00",
-      "period": "one-time"
-    }
   ]
 }

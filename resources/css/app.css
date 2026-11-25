@@ -8,19 +8,30 @@
 
 @theme {
     --font-sans:
-        'Instrument Sans', 'Noto Sans Sinhala', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+        'Plus Jakarta Sans', 'Noto Sans Sinhala', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
         'Noto Color Emoji';
+    --font-sinhala: 'Noto Sans Sinhala', 'Iskoola Pota', ui-sans-serif, sans-serif;
 
-    /* Senanayake PPA brand: maroon and gold, from the association's site */
-    --color-maroon-50: #fbf2f4;
+    /* Senanayake PPA brand, from the design system (Heritage Maroon + Ceremonial Gold) */
+    --color-maroon-50: #fbf3f4;
     --color-maroon-100: #f5dfe4;
-    --color-maroon-700: #861a32;
-    --color-maroon-800: #6e1027;
-    --color-maroon-900: #5a0b1d;
-    --color-maroon-950: #3d0612;
+    --color-maroon-600: #7a1a2a;
+    --color-maroon-700: #5c111d;
+    --color-maroon-800: #4a0e17;
+    --color-maroon-900: #3a0a12;
+    --color-maroon-950: #2a060c;
+    --color-gold-100: #fbf3dc;
     --color-gold-300: #f0d27a;
-    --color-gold-400: #e0b54a;
-    --color-gold-500: #c9982b;
+    --color-gold-400: #e5b94c;
+    --color-gold-500: #d4a843;
+    /* text on gold fills, and gold-toned text on gold-100 (5.8:1) */
+    --color-gold-ink: #3a2a05;
+    --color-gold-text: #7a5a10;
+    /* slate 600: metadata on grey (#f3f4f6) sections, where #6b7280 fails AA */
+    --color-slate-strong: #4b5563;
+
+    --shadow-card: 0 1px 2px rgb(17 24 39 / 0.04), 0 8px 24px -8px rgb(17 24 39 / 0.1);
+    --shadow-lift: 0 2px 4px rgb(17 24 39 / 0.04), 0 24px 48px -16px rgb(74 14 23 / 0.22);
 
     --radius-lg: var(--radius);
     --radius-md: calc(var(--radius) - 2px);
@@ -174,121 +185,17 @@
     body {
         @apply bg-background text-foreground;
     }
+
+    /* Sinhala script: no tracking and taller leading. Headings set their own leading. */
+    [lang='si'] {
+        font-family: var(--font-sinhala);
+        letter-spacing: 0;
+        line-height: 1.8;
+    }
 }
 
-/* ---------- Office bearers organisation tree (public site) ---------- */
+/* ---------- Scroll-in reveal and lifting cards (office bearers, contributor boards) ---------- */
 @layer components {
-    .org-tree {
-        --org-line: var(--color-gold-400);
-        --org-gap: 1.75rem;
-    }
-
-    .org-children {
-        position: relative;
-        display: flex;
-        justify-content: center;
-        padding-top: var(--org-gap);
-    }
-
-    /* the line coming down from the parent */
-    .org-children::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 50%;
-        height: var(--org-gap);
-        border-left: 2px solid var(--org-line);
-        transform-origin: top;
-    }
-
-    .org-children > li {
-        position: relative;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding: var(--org-gap) 0.75rem 0;
-        list-style: none;
-    }
-
-    /* each child's half of the horizontal bar, plus its own drop line */
-    .org-children > li::before,
-    .org-children > li::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        right: 50%;
-        width: 50%;
-        height: var(--org-gap);
-        border-top: 2px solid var(--org-line);
-    }
-
-    .org-children > li::before {
-        transform-origin: right;
-    }
-
-    .org-children > li::after {
-        right: auto;
-        left: 50%;
-        border-left: 2px solid var(--org-line);
-        transform-origin: left;
-    }
-
-    .org-children > li:only-child::before {
-        display: none;
-    }
-
-    .org-children > li:only-child::after {
-        border-top: 0;
-    }
-
-    .org-children > li:first-child::before,
-    .org-children > li:last-child::after {
-        border-top: 0;
-    }
-
-    .org-children > li:last-child::before {
-        border-right: 2px solid var(--org-line);
-        border-top-right-radius: 10px;
-    }
-
-    .org-children > li:first-child::after {
-        border-top-left-radius: 10px;
-    }
-
-    .org-children > li:first-child:not(:only-child)::after {
-        border-left-width: 2px;
-    }
-
-    .org-children > li:last-child:not(:only-child)::after {
-        border-left: 0;
-    }
-
-    /* phones: one vertical line, no horizontal bars */
-    @media (max-width: 639px) {
-        .org-children {
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .org-children > li {
-            padding-left: 0;
-            padding-right: 0;
-        }
-
-        .org-children > li::before {
-            display: none;
-        }
-
-        .org-children > li::after {
-            left: 50%;
-            width: 0;
-            border-top: 0;
-            border-left: 2px solid var(--org-line) !important;
-            border-radius: 0 !important;
-        }
-    }
-
-    /* ---- animation: revealed when scrolled into view ---- */
     [data-reveal='hidden'] .reveal-item {
         opacity: 0;
     }
@@ -296,23 +203,6 @@
     [data-reveal='shown'] .reveal-item {
         animation: org-rise 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
         animation-delay: var(--delay, 0ms);
-    }
-
-    [data-reveal='hidden'] .org-children::before,
-    [data-reveal='hidden'] .org-children > li::before,
-    [data-reveal='hidden'] .org-children > li::after {
-        opacity: 0;
-    }
-
-    [data-reveal='shown'] .org-children::before {
-        animation: org-grow-y 0.35s ease-out backwards;
-        animation-delay: var(--delay, 0ms);
-    }
-
-    [data-reveal='shown'] .org-children > li::before,
-    [data-reveal='shown'] .org-children > li::after {
-        animation: org-grow-x 0.45s ease-out backwards;
-        animation-delay: calc(var(--delay, 0ms) + 150ms);
     }
 
     .org-card {
@@ -327,10 +217,7 @@
     }
 
     @media (prefers-reduced-motion: reduce) {
-        [data-reveal] .reveal-item,
-        [data-reveal] .org-children::before,
-        [data-reveal] .org-children > li::before,
-        [data-reveal] .org-children > li::after {
+        [data-reveal] .reveal-item {
             animation: none !important;
             opacity: 1 !important;
         }
@@ -351,28 +238,6 @@
     to {
         opacity: 1;
         transform: none;
-    }
-}
-
-@keyframes org-grow-y {
-    from {
-        opacity: 0;
-        transform: scaleY(0);
-    }
-    to {
-        opacity: 1;
-        transform: scaleY(1);
-    }
-}
-
-@keyframes org-grow-x {
-    from {
-        opacity: 0;
-        transform: scaleX(0);
-    }
-    to {
-        opacity: 1;
-        transform: scaleX(1);
     }
 }
 

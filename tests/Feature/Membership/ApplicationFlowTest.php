@@ -15,6 +15,7 @@ $application = [
     'nic' => '199812345678',
     'ol_year' => 2014,
     'al_year' => 2017,
+    'category' => 'annual',
 ];
 
 it('lets a signed-in past pupil apply, storing the NIC encrypted', function () use ($application) {

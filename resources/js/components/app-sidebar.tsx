@@ -3,7 +3,7 @@ import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem, type SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { Globe, HandCoins, IdCard, LayoutGrid, UserCheck } from 'lucide-react';
+import { Globe, HandCoins, IdCard, LayoutGrid, ReceiptText, Tags, UserCheck } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [
@@ -25,7 +25,7 @@ const contentEditorRoles = ['super-admin', 'content-editor'];
 
 const adminNavItems: NavItem[] = [
     {
-        title: 'Applicants',
+        title: 'Membership requests',
         url: '/admin/applicants',
         icon: UserCheck,
     },
@@ -34,6 +34,16 @@ const adminNavItems: NavItem[] = [
 const treasurerRoles = ['super-admin', 'treasurer'];
 
 const treasurerNavItems: NavItem[] = [
+    {
+        title: 'Membership payments',
+        url: '/admin/membership/payments',
+        icon: ReceiptText,
+    },
+    {
+        title: 'Membership plans',
+        url: '/admin/membership/plans',
+        icon: Tags,
+    },
     {
         title: 'Supporters',
         url: '/admin/supporters',

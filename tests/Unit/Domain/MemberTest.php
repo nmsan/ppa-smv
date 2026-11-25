@@ -4,13 +4,21 @@ use App\Domain\Membership\Batch;
 use App\Domain\Membership\Events\ApplicationSubmitted;
 use App\Domain\Membership\Events\MemberApproved;
 use App\Domain\Membership\Member;
+use App\Domain\Membership\MembershipCategory;
 use App\Domain\Membership\MembershipNumber;
+use App\Domain\Membership\MembershipPlan;
 use App\Domain\Membership\MembershipStatus;
 use App\Domain\Shared\DomainRuleViolation;
+use App\Domain\Shared\Money;
 
 function applicant(): Member
 {
-    return Member::apply('m1', 1, ' Kasun Perera ', 'KASUN@example.test', '0771234567', '199812345678V', Batch::of(2014, 2017), new DateTimeImmutable('2026-11-25'));
+    return Member::apply('m1', 1, ' Kasun Perera ', 'KASUN@example.test', '0771234567', '199812345678V', Batch::of(2014, 2017), annualPlan(), new DateTimeImmutable('2026-11-25'));
+}
+
+function annualPlan(): MembershipPlan
+{
+    return MembershipPlan::create('p1', MembershipCategory::Annual, 'Annual member', null, Money::fromRupees(1000));
 }
 
 it('starts as an applicant and records the submission', function () {

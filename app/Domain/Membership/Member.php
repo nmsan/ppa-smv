@@ -6,6 +6,7 @@ use App\Domain\Membership\Events\ApplicationSubmitted;
 use App\Domain\Membership\Events\MemberApproved;
 use App\Domain\Shared\DomainEvent;
 use App\Domain\Shared\DomainRuleViolation;
+use App\Domain\Shared\Money;
 use DateTimeImmutable;
 
 final class Member
@@ -30,8 +31,10 @@ final class Member
         private ?string $rejectionReason,
         public readonly MemberProfile $profile = new MemberProfile,
         public readonly string $source = 'application',
+        private ?Money $fee = null,
     ) {}
 
+    /** A new request for the chosen plan. The fee at this moment is kept, so later price changes do not affect it. */
     public static function apply(
         string $id,
         ?int $userId,
@@ -40,15 +43,20 @@ final class Member
         string $phone,
         string $nic,
         Batch $batch,
+        MembershipPlan $plan,
         DateTimeImmutable $now,
     ): self {
         if (trim($fullName) === '') {
             throw new DomainRuleViolation('Full name is required.');
         }
+        if (! $plan->isActive()) {
+            throw new DomainRuleViolation("{$plan->name()} is not open for new requests at the moment.");
+        }
 
         $member = new self(
             $id, $userId, trim($fullName), strtolower(trim($email)), trim($phone), strtoupper(trim($nic)),
-            $batch, MembershipCategory::Annual, MembershipStatus::Applied, null, $now, null, null, null,
+            $batch, $plan->category, MembershipStatus::Applied, null, $now, null, null, null,
+            fee: $plan->fee(),
         );
         $member->record(new ApplicationSubmitted($id, $now));
 
@@ -73,10 +81,11 @@ final class Member
         ?string $rejectionReason,
         MemberProfile $profile = new MemberProfile,
         string $source = 'application',
+        ?Money $fee = null,
     ): self {
         return new self(
             $id, $userId, $fullName, $email, $phone, $nic, $batch, $category, $status,
-            $membershipNumber, $appliedAt, $approvedAt, $approvedBy, $rejectionReason, $profile, $source,
+            $membershipNumber, $appliedAt, $approvedAt, $approvedBy, $rejectionReason, $profile, $source, $fee,
         );
     }
 
@@ -108,9 +117,18 @@ final class Member
         );
     }
 
-    public function approve(MembershipNumber $number, int $approverId, DateTimeImmutable $now): void
+    /**
+     * The committee accepts the request. They may approve it on another plan
+     * (for example annual instead of life, under constitution clause 4.3.1);
+     * the fee then follows that plan.
+     */
+    public function approve(MembershipNumber $number, int $approverId, DateTimeImmutable $now, ?MembershipPlan $as = null): void
     {
         $this->moveTo(MembershipStatus::Approved);
+        if ($as !== null && $as->category !== $this->category) {
+            $this->category = $as->category;
+            $this->fee = $as->fee();
+        }
         $this->membershipNumber = $number;
         $this->approvedAt = $now;
         $this->approvedBy = $approverId;
@@ -189,6 +207,15 @@ final class Member
         return in_array($this->status, [MembershipStatus::Approved, MembershipStatus::Active, MembershipStatus::Expiring], true);
     }
 
+    /** The fee has been collected and recorded by the treasurer: the membership starts. */
+    public function activate(): void
+    {
+        if ($this->status === MembershipStatus::Applied) {
+            throw new DomainRuleViolation('This request has not been approved yet, so no fee can be recorded.');
+        }
+        $this->moveTo(MembershipStatus::Active);
+    }
+
     public function reject(string $reason): void
     {
         if (trim($reason) === '') {
@@ -211,6 +238,12 @@ final class Member
     public function category(): MembershipCategory
     {
         return $this->category;
+    }
+
+    /** The fee agreed when the request was made (or when approved on another plan). Null for old register records. */
+    public function fee(): ?Money
+    {
+        return $this->fee;
     }
 
     public function membershipNumber(): ?MembershipNumber
@@ -262,6 +295,7 @@ final class Member
             rejectionReason: $this->rejectionReason,
             profile: $changes['profile'] ?? $this->profile,
             source: $this->source,
+            fee: $this->fee,
         );
         $copy->events = $this->events;
 

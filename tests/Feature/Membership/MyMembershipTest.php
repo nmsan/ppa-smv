@@ -89,7 +89,7 @@ it('lets members update contact details but keeps name, NIC and batch locked', f
 
 it('lets applicants correct everything, including their batch', function () {
     $this->actingAs($this->user)->post('/my-membership/apply', [
-        'full_name' => 'New Person', 'email' => 'np@example.test', 'phone' => '0771112222', 'nic' => '200112345678', 'ol_year' => 2016, 'al_year' => 2019,
+        'full_name' => 'New Person', 'email' => 'np@example.test', 'phone' => '0771112222', 'nic' => '200112345678', 'ol_year' => 2016, 'al_year' => 2019, 'category' => 'annual',
     ]);
 
     $this->put('/my-membership', ['full_name' => 'New Person Corrected', 'nic' => '200112345679', 'ol_year' => 2017, 'al_year' => 2020, 'phone' => '0771112222'])
@@ -103,19 +103,19 @@ it('stops a linked member from applying again', function () {
     $this->actingAs($this->user)->post('/my-membership/claim', ['membership_number' => 'M-002', 'phone' => '0771234567']);
 
     $this->post('/my-membership/apply', [
-        'full_name' => 'X', 'email' => 'x@example.test', 'phone' => '0771112222', 'nic' => '200112345678', 'al_year' => 2019,
+        'full_name' => 'X', 'email' => 'x@example.test', 'phone' => '0771112222', 'nic' => '200112345678', 'al_year' => 2019, 'category' => 'annual',
     ])->assertSessionHasErrors(['form' => 'You already have a membership record.']);
 });
 
 it('refuses an application with a NIC that already belongs to a member', function () {
     $this->actingAs($this->user)->post('/my-membership/apply', [
-        'full_name' => 'X', 'email' => 'x@example.test', 'phone' => '0771112222', 'nic' => '199812345678', 'al_year' => 2019,
+        'full_name' => 'X', 'email' => 'x@example.test', 'phone' => '0771112222', 'nic' => '199812345678', 'al_year' => 2019, 'category' => 'annual',
     ])->assertSessionHasErrors('form');
 });
 
 it('accepts phone numbers and NICs typed with spaces, dashes or +94', function (string $phone, string $nic, string $storedPhone, string $storedNic) {
     $this->actingAs($this->user)->post('/my-membership/apply', [
-        'full_name' => 'New Person', 'email' => 'np@example.test', 'phone' => $phone, 'nic' => $nic, 'al_year' => 2018,
+        'full_name' => 'New Person', 'email' => 'np@example.test', 'phone' => $phone, 'nic' => $nic, 'al_year' => 2018, 'category' => 'annual',
     ])->assertSessionHasNoErrors()->assertRedirect('/my-membership');
 
     $row = MemberModel::query()->where('user_id', $this->user->id)->first();
@@ -129,7 +129,7 @@ it('accepts phone numbers and NICs typed with spaces, dashes or +94', function (
 
 it('still refuses a phone number that is clearly wrong', function () {
     $this->actingAs($this->user)->post('/my-membership/apply', [
-        'full_name' => 'New Person', 'email' => 'np@example.test', 'phone' => '12345', 'nic' => '200055501010', 'al_year' => 2018,
+        'full_name' => 'New Person', 'email' => 'np@example.test', 'phone' => '12345', 'nic' => '200055501010', 'al_year' => 2018, 'category' => 'annual',
     ])->assertSessionHasErrors('phone');
 });
 

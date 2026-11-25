@@ -16,6 +16,9 @@ final readonly class ApplicantView
         public ?int $batchKey,
         public string $appliedAt,
         public bool $canApprove,
+        public string $category,
+        public ?int $feeCents,
+        public ?string $phone,
     ) {}
 
     public static function from(Member $member, bool $canApprove): self
@@ -29,6 +32,9 @@ final readonly class ApplicantView
             $member->batch?->key(),
             $member->appliedAt->format('Y-m-d'),
             $canApprove,
+            $member->category()->value,
+            $member->fee()?->cents,
+            $member->phone,
         );
     }
 }

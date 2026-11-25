@@ -8,6 +8,8 @@ use App\Application\Ports\DashboardQueries;
 use App\Application\Ports\EventDispatcher;
 use App\Application\Ports\MemberRepository;
 use App\Application\Ports\MembershipNumberGenerator;
+use App\Application\Ports\MembershipPaymentRepository;
+use App\Application\Ports\MembershipPlanRepository;
 use App\Application\Ports\Notifier;
 use App\Application\Ports\SupporterReadModel;
 use App\Application\Ports\SupporterRepository;
@@ -16,6 +18,8 @@ use App\Infrastructure\Access\EloquentActorResolver;
 use App\Infrastructure\Notifications\LogNotifier;
 use App\Infrastructure\Persistence\EloquentMemberRepository;
 use App\Infrastructure\Persistence\EloquentMembershipNumberGenerator;
+use App\Infrastructure\Persistence\EloquentMembershipPaymentRepository;
+use App\Infrastructure\Persistence\EloquentMembershipPlanRepository;
 use App\Infrastructure\Persistence\EloquentSupporterRepository;
 use App\Infrastructure\Queries\EloquentDashboardQueries;
 use App\Infrastructure\Queries\EloquentSupporterReadModel;
@@ -39,5 +43,7 @@ class DomainServiceProvider extends ServiceProvider
         DashboardQueries::class => EloquentDashboardQueries::class,
         SupporterRepository::class => EloquentSupporterRepository::class,
         SupporterReadModel::class => EloquentSupporterReadModel::class,
+        MembershipPlanRepository::class => EloquentMembershipPlanRepository::class,
+        MembershipPaymentRepository::class => EloquentMembershipPaymentRepository::class,
     ];
 }

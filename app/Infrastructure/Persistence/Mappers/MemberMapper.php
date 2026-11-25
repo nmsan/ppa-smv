@@ -8,6 +8,7 @@ use App\Domain\Membership\MemberProfile;
 use App\Domain\Membership\MembershipCategory;
 use App\Domain\Membership\MembershipNumber;
 use App\Domain\Membership\MembershipStatus;
+use App\Domain\Shared\Money;
 use App\Infrastructure\Persistence\Eloquent\Models\MemberModel;
 
 final class MemberMapper
@@ -38,6 +39,7 @@ final class MemberMapper
                 fee2024: $row->fee_2024,
             ),
             source: $row->source,
+            fee: $row->fee_cents !== null ? Money::fromCents((int) $row->fee_cents) : null,
         );
     }
 
@@ -63,6 +65,7 @@ final class MemberMapper
             'joined_via' => $member->profile->joinedVia,
             'fee_2024' => $member->profile->fee2024,
             'category' => $member->category()->value,
+            'fee_cents' => $member->fee()?->cents,
             'status' => $member->status()->value,
             'applied_at' => $member->appliedAt,
             'approved_at' => $member->approvedAt(),

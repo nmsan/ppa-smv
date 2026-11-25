@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Public;
 
+use App\Application\Membership\UseCases\ListMembershipPlans;
+use App\Application\Ports\DashboardQueries;
 use App\Application\Ports\SupporterReadModel;
 use App\Http\Controllers\Controller;
 use App\Support\SiteContent;
@@ -15,19 +17,28 @@ use Inertia\Response;
  */
 class PageController extends Controller
 {
-    public function home(): Response
+    public function home(SupporterReadModel $giving, DashboardQueries $stats): Response
     {
         $news = SiteContent::get('news')['items'];
+        $batches = array_keys($stats->membersByBatch());
+        $today = now()->toDateString();
+
+        $events = array_values(array_filter($news, fn ($n) => $n['type'] === 'event' && ($n['date'] ?? '') >= $today));
+        usort($events, fn ($a, $b) => strcmp($a['date'], $b['date']));
+
+        // News and notices for the magazine grid: dated posts newest first, undated notices after.
+        $posts = array_values(array_filter($news, fn ($n) => $n['type'] !== 'event'));
+        usort($posts, fn ($a, $b) => strcmp($b['date'] ?? '', $a['date'] ?? ''));
 
         return Inertia::render('public/home', ['editContent' => 'home',
             'home' => SiteContent::get('home'),
             'message' => SiteContent::get('principals')['message'],
-            'events' => array_values(array_filter(
-                $news,
-                fn ($n) => $n['type'] === 'event' && $n['date'] >= now()->toDateString(),
-            )),
-            'news' => array_values(array_filter($news, fn ($n) => $n['type'] === 'news')),
+            'events' => $events,
+            'news' => array_slice($posts, 0, 3),
             'projects' => SiteContent::get('projects')['items'],
+            // Live figures from the treasurer's ledger and the member register, never typed in by hand.
+            'giving' => $giving->publicTotals(),
+            'batches' => $batches ? ['from' => (int) min($batches), 'to' => (int) max($batches)] : null,
         ]);
     }
 
@@ -51,9 +62,13 @@ class PageController extends Controller
         return Inertia::render('public/association/office-bearers', ['editContent' => 'office-bearers', 'content' => SiteContent::get('office-bearers')]);
     }
 
-    public function membership(): Response
+    public function membership(ListMembershipPlans $plans): Response
     {
-        return Inertia::render('public/membership', ['editContent' => 'membership', 'membership' => SiteContent::get('membership')]);
+        return Inertia::render('public/membership', ['editContent' => 'membership',
+            'membership' => SiteContent::get('membership'),
+            // Fees come from the treasurer's membership plans, not the page text.
+            'plans' => $plans->execute(),
+        ]);
     }
 
     public function projects(): Response

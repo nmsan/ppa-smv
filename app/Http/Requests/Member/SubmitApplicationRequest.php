@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Member;
 
 use App\Application\Membership\DTO\SubmitApplicationData;
+use App\Domain\Membership\MembershipCategory;
 use App\Http\Requests\Concerns\NormalisesContactInput;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -30,6 +31,7 @@ class SubmitApplicationRequest extends FormRequest
             'nic' => ['required', 'string', 'regex:/^(\d{9}[VX]|\d{12}|\d{12}[VX]|[A-Z]\d{7,8})$/'],
             'ol_year' => ['nullable', 'integer', 'between:1940,2100', 'required_without:al_year'],
             'al_year' => ['nullable', 'integer', 'between:1940,2100', 'required_without:ol_year'],
+            'category' => ['required', 'in:annual,life'],
         ];
     }
 
@@ -39,6 +41,7 @@ class SubmitApplicationRequest extends FormRequest
         return [
             'phone.regex' => 'Enter a mobile number such as 077 123 4567, or +44... from overseas.',
             'nic.regex' => 'Enter an old (9 digits + V/X) or new (12 digits) NIC number.',
+            'category.required' => 'Choose annual or life membership.',
         ];
     }
 
@@ -52,6 +55,7 @@ class SubmitApplicationRequest extends FormRequest
             nic: $this->string('nic'),
             olYear: $this->integer('ol_year') ?: null,
             alYear: $this->integer('al_year') ?: null,
+            category: MembershipCategory::from((string) $this->string('category')),
         );
     }
 }

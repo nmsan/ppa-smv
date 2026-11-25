@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\Admin\ApplicantController;
 use App\Http\Controllers\Admin\ContentController;
+use App\Http\Controllers\Admin\MembershipPaymentController;
+use App\Http\Controllers\Admin\MembershipPlanController;
 use App\Http\Controllers\Admin\SupporterController;
 use Illuminate\Support\Facades\Route;
 
@@ -43,6 +45,16 @@ Route::middleware(['auth', 'role:super-admin|treasurer'])
         Route::put('{supporter}', 'update')->name('update');
         Route::put('{supporter}/member', 'link')->name('link');
         Route::post('{supporter}/contributions', 'contribute')->name('contribute');
+    });
+
+Route::middleware(['auth', 'role:super-admin|treasurer'])
+    ->prefix('admin/membership')
+    ->name('admin.membership.')
+    ->group(function () {
+        Route::get('plans', [MembershipPlanController::class, 'index'])->name('plans.index');
+        Route::put('plans/{category}', [MembershipPlanController::class, 'update'])->name('plans.update');
+        Route::get('payments', [MembershipPaymentController::class, 'index'])->name('payments.index');
+        Route::post('payments/{member}', [MembershipPaymentController::class, 'store'])->name('payments.store');
     });
 
 // The earlier address, kept so bookmarks still work.

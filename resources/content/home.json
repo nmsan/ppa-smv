@@ -1,33 +1,10 @@
 {
-  "slides": [
-    {
-      "title": "Become a member",
-      "text": "Reconnect with your classmates and help Senanayake Central College grow.",
-      "cta": {
-        "label": "Join today",
-        "href": "/register"
-      },
-      "image": "/images/hero/students.jpg"
-    },
-    {
-      "title": "80 වසරක අභිමානය",
-      "text": "1946 – 2026 · සේනානායක මධ්‍ය විද්‍යාලය (ජාතික පාසල), මාදම්පේ",
-      "cta": {
-        "label": "Our history",
-        "href": "/college/history"
-      },
-      "image": "/images/brand/maroon-waves.jpg"
-    },
-    {
-      "title": "Support school projects",
-      "text": "Renovating the main building, the main gate and the swimming pool.",
-      "cta": {
-        "label": "See projects",
-        "href": "/projects"
-      },
-      "image": "/images/projects/main-building.jpg"
-    }
-  ],
+  "hero": {
+    "headline": "80 Years of Pride.",
+    "text": "Eight decades of past pupils from Senanayake Central College (National School), Madampe. Reconnect with your batch, back the school's next chapter, and carry its light forward.",
+    "image": "/images/hero/main-building-lit.jpg",
+    "caption": "The main building, lit for the 80th year"
+  },
   "anniversary": {
     "title": "80 වසරක අභිමානය...!",
     "from": "1946-01-03",

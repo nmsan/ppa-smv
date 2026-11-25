@@ -9,8 +9,9 @@ import AppLayout from '@/layouts/app-layout';
 import { lkr } from '@/lib/money';
 import { cn } from '@/lib/utils';
 import { type BreadcrumbItem, type SharedData } from '@/types';
+import { categoryLabel, type MembershipPlan } from '@/types/membership';
 import { Head, useForm, usePage } from '@inertiajs/react';
-import { BadgeCheck, Clock, HandHeart, IdCard, LoaderCircle, Lock, Search, UserPlus } from 'lucide-react';
+import { BadgeCheck, Clock, HandCoins, HandHeart, IdCard, LoaderCircle, Lock, Search, UserPlus } from 'lucide-react';
 import { type ComponentProps, type FormEventHandler, useState } from 'react';
 
 const breadcrumbs: BreadcrumbItem[] = [{ title: 'My membership', href: '/my-membership' }];
@@ -31,16 +32,18 @@ interface Membership {
     country: string | null;
     since: string;
     fromRegister: boolean;
+    /** The fee agreed when they asked to join; null for old register records. */
+    feeCents: number | null;
 }
 
 type FormData = Record<string, string>;
 
 const statusText: Record<Membership['status'], { title: string; text: string }> = {
     applied: {
-        title: 'Waiting for approval',
-        text: 'Your batch representative will review your application. You can still correct your details below.',
+        title: 'Request under review',
+        text: 'The committee will review your request. You can still correct your details below.',
     },
-    approved: { title: 'Member', text: 'Your membership is approved.' },
+    approved: { title: 'Approved', text: 'Your request is approved.' },
     active: { title: 'Member', text: 'Your membership is active.' },
     expiring: { title: 'Renewal due soon', text: 'Your membership is due for renewal.' },
     lapsed: { title: 'Membership lapsed', text: 'Please contact the treasurer to renew.' },
@@ -95,10 +98,18 @@ function SubmitButton({ processing, children }: { processing: boolean; children:
 }
 
 /** Not a member yet: apply, or link an existing record from the old register. */
-function Join() {
+function Join({ plans }: { plans: MembershipPlan[] }) {
     const { auth } = usePage<SharedData>().props;
     const [mode, setMode] = useState<'new' | 'existing'>('new');
-    const apply = useForm<FormData>({ full_name: auth.user.name, email: auth.user.email, phone: '', nic: '', ol_year: '', al_year: '' });
+    const apply = useForm<FormData>({
+        full_name: auth.user.name,
+        email: auth.user.email,
+        phone: '',
+        nic: '',
+        ol_year: '',
+        al_year: '',
+        category: plans.length === 1 ? plans[0].category : '',
+    });
     const claim = useForm<FormData>({ membership_number: '', phone: '', nic: '' });
 
     const submitApply: FormEventHandler = (e) => {
@@ -139,13 +150,53 @@ function Join() {
             </div>
 
             <div className="grid gap-3 sm:grid-cols-2">
-                {choice('new', UserPlus, "I'm joining for the first time", 'Send your details to your batch representative for approval.')}
+                {choice('new', UserPlus, "I'm joining for the first time", 'Choose annual or life membership and send your request for review.')}
                 {choice('existing', Search, "I'm already a member", 'Find your record from the association register with your membership number.')}
             </div>
 
             {mode === 'new' ? (
                 <form onSubmit={submitApply} className="space-y-5 rounded-xl border p-5" noValidate>
                     <FormErrorSummary errors={apply.errors} action="sent" />
+                    <fieldset className="space-y-3">
+                        <legend className="text-sm font-medium">Membership you are asking for</legend>
+                        <div className="grid gap-3 sm:grid-cols-2">
+                            {plans.map((p) => (
+                                <label
+                                    key={p.category}
+                                    className={cn(
+                                        'flex cursor-pointer gap-3 rounded-xl border p-4 transition-colors',
+                                        apply.data.category === p.category ? 'border-primary ring-primary ring-1' : 'hover:bg-muted/50',
+                                    )}
+                                >
+                                    <input
+                                        type="radio"
+                                        name="category"
+                                        value={p.category}
+                                        checked={apply.data.category === p.category}
+                                        onChange={() => apply.setData('category', p.category)}
+                                        className="accent-maroon-800 mt-1 size-4"
+                                    />
+                                    <span>
+                                        <span className="block font-semibold">{p.name}</span>
+                                        {p.nameSi && (
+                                            <span lang="si" className="text-muted-foreground block text-sm">
+                                                {p.nameSi}
+                                            </span>
+                                        )}
+                                        <span className="mt-1 block text-lg font-bold tabular-nums">
+                                            {lkr(p.feeCents)}{' '}
+                                            <span className="text-muted-foreground text-sm font-normal">{p.recurring ? 'per year' : 'one time'}</span>
+                                        </span>
+                                    </span>
+                                </label>
+                            ))}
+                        </div>
+                        <InputError message={apply.errors.category} />
+                        <p className="text-muted-foreground text-sm">
+                            You don't pay now. Once the committee approves your request, an office bearer will contact you to collect the fee (cash,
+                            bank transfer or cheque).
+                        </p>
+                    </fieldset>
                     <TextField of={apply} name="full_name" label="Full name" required autoComplete="name" />
                     <TextField of={apply} name="email" label="Email" type="email" required autoComplete="email" />
                     <TextField of={apply} name="phone" label="Mobile number" required placeholder="0771234567" autoComplete="tel" />
@@ -155,7 +206,7 @@ function Join() {
                         <TextField of={apply} name="al_year" label="A/L year" type="number" min={1940} max={2100} />
                     </div>
                     <p className="text-muted-foreground text-sm">Enter at least one year. Leave A/L blank if you left school after O/L.</p>
-                    <SubmitButton processing={apply.processing}>Submit for approval</SubmitButton>
+                    <SubmitButton processing={apply.processing}>Send my request</SubmitButton>
                 </form>
             ) : (
                 <form onSubmit={submitClaim} className="space-y-5 rounded-xl border p-5" noValidate>
@@ -209,11 +260,13 @@ function Details({ m }: { m: Membership }) {
                     <p className="text-2xl font-semibold">{m.number ?? 'No number yet'}</p>
                     <p className="text-muted-foreground mt-1 text-sm">
                         {status.text}
-                        {isMember && ` ${m.category.charAt(0).toUpperCase() + m.category.slice(1)} member`}
+                        {isMember && ` ${categoryLabel[m.category] ?? m.category} member`}
                         {m.batchKey && ` · A/L ${m.batchKey} batch`}
                     </p>
                 </div>
             </div>
+
+            <FeeCard m={m} />
 
             <form onSubmit={submit} className="space-y-6 rounded-xl border p-5" noValidate>
                 <h2 className="font-semibold">Your details</h2>
@@ -264,6 +317,30 @@ function Details({ m }: { m: Membership }) {
     );
 }
 
+/** What happens about the fee at each stage. Nothing is paid online in this phase. */
+function FeeCard({ m }: { m: Membership }) {
+    if (m.feeCents === null || !['applied', 'approved'].includes(m.status)) return null;
+    const plan = `${categoryLabel[m.category] ?? m.category} membership`;
+
+    return (
+        <div className="flex gap-4 rounded-xl border p-5">
+            <HandCoins className="text-maroon-700 size-8 shrink-0" />
+            <div>
+                <p className="text-muted-foreground text-sm">{plan} fee</p>
+                <p className="text-2xl font-semibold whitespace-nowrap tabular-nums">
+                    {lkr(m.feeCents)}
+                    <span className="text-muted-foreground ml-1 text-sm font-normal">{m.category === 'annual' ? 'per year' : 'one time'}</span>
+                </p>
+                <p className="text-muted-foreground mt-1 text-sm">
+                    {m.status === 'applied'
+                        ? "You don't pay now. If the committee approves your request, an office bearer will contact you to collect it."
+                        : 'An office bearer will contact you to collect the fee by cash, bank transfer or cheque. Your membership becomes active once the treasurer records it.'}
+                </p>
+            </div>
+        </div>
+    );
+}
+
 interface Giving {
     donation_cents: number;
     sponsorship_cents: number;
@@ -292,7 +369,15 @@ function GivingCard({ giving }: { giving: Giving }) {
     );
 }
 
-export default function MyMembership({ membership, giving }: { membership: Membership | null; giving: Giving | null }) {
+export default function MyMembership({
+    membership,
+    giving,
+    plans,
+}: {
+    membership: Membership | null;
+    giving: Giving | null;
+    plans: MembershipPlan[];
+}) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="My membership" />
@@ -305,7 +390,7 @@ export default function MyMembership({ membership, giving }: { membership: Membe
                             !membership
                                 ? 'Join the association, or link your existing membership.'
                                 : membership.status === 'applied'
-                                  ? `Applied on ${formatDate(membership.since)}`
+                                  ? `Request sent on ${formatDate(membership.since)}`
                                   : membership.fromRegister
                                     ? "Member of the Past Pupils' Association, carried over from the association register"
                                     : `Member of the Past Pupils' Association since ${formatDate(membership.since)}`
@@ -314,7 +399,7 @@ export default function MyMembership({ membership, giving }: { membership: Membe
                 </div>
                 <FlashMessage />
                 {giving && <GivingCard giving={giving} />}
-                {membership ? <Details m={membership} /> : <Join />}
+                {membership ? <Details m={membership} /> : <Join plans={plans} />}
             </div>
         </AppLayout>
     );

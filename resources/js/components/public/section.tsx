@@ -1,3 +1,4 @@
+import { langOf } from '@/lib/lang';
 import { cn } from '@/lib/utils';
 import { type ReactNode } from 'react';
 
@@ -5,12 +6,39 @@ export function Section({ children, className }: { children: ReactNode; classNam
     return <section className={cn('mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16', className)}>{children}</section>;
 }
 
-export function SectionTitle({ children, kicker }: { children: ReactNode; kicker?: string }) {
+/** Small uppercase label with a gold rule, used above section headings. */
+export function Kicker({ children, className }: { children: string; className?: string }) {
     return (
-        <div className="mb-8">
-            {kicker && <p className="text-maroon-700 text-sm font-semibold tracking-wider uppercase">{kicker}</p>}
-            <h2 className="text-maroon-950 mt-1 text-2xl font-bold sm:text-3xl">{children}</h2>
-            <div className="bg-gold-400 mt-3 h-1 w-16 rounded" />
+        <p
+            {...langOf(children)}
+            className={cn(
+                'text-maroon-700 inline-flex items-center gap-2.5 text-[13px] font-bold tracking-[0.14em] uppercase',
+                "before:bg-gold-500 before:h-0.5 before:w-[22px] before:rounded-full before:content-['']",
+                className,
+            )}
+        >
+            {children}
+        </p>
+    );
+}
+
+interface SectionTitleProps {
+    children: ReactNode;
+    kicker?: string;
+    description?: ReactNode;
+    /** A link shown at the right on wide screens, e.g. "All news →". */
+    action?: ReactNode;
+}
+
+export function SectionTitle({ children, kicker, description, action }: SectionTitleProps) {
+    return (
+        <div className="mb-10 flex flex-wrap items-end justify-between gap-x-6 gap-y-3">
+            <div className="max-w-2xl">
+                {kicker && <Kicker>{kicker}</Kicker>}
+                <h2 className="mt-2.5 text-[28px] leading-tight font-bold tracking-tight text-neutral-900 sm:text-4xl">{children}</h2>
+                {description && <p className="mt-3 text-[17px] text-neutral-600">{description}</p>}
+            </div>
+            {action}
         </div>
     );
 }

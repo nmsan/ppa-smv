@@ -113,3 +113,13 @@ it('opens each news post on its own page', function () {
 it('returns 404 for an unknown news post', function () {
     $this->get('/news/01JZZZZZZZZZZZZZZZZZZZZZZZ')->assertNotFound();
 });
+
+it('shows the hero banner and live giving and batch figures on the home page', function () {
+    $this->get('/')->assertInertia(fn (Assert $page) => $page
+        ->where('home.hero.headline', '80 Years of Pride.')
+        ->has('giving.raised_cents')
+        ->has('giving.supporters')
+        ->has('giving.shown')
+        ->where('giving.raised_cents', fn ($cents) => $cents > 0)
+        ->has('batches'));
+});

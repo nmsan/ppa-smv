@@ -15,12 +15,21 @@ const buttonVariants = cva(
                 secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80',
                 ghost: 'hover:bg-accent hover:text-accent-foreground',
                 link: 'text-primary underline-offset-4 hover:underline',
+                // Public-site brand variants (see the design system). One gold button per view.
+                gold: 'rounded-full bg-gold-500 font-semibold text-gold-ink shadow-[0_6px_16px_-6px_rgb(212_168_67/0.7)] hover:bg-gold-400 focus-visible:ring-gold-500',
+                maroon: 'rounded-full bg-maroon-800 font-semibold text-white hover:bg-maroon-700 focus-visible:ring-gold-500',
+                glass: 'rounded-full border border-white/35 bg-white/10 font-semibold text-white backdrop-blur hover:bg-white/20 focus-visible:ring-gold-500',
+                pill: 'rounded-full border border-neutral-200 bg-transparent font-semibold text-neutral-800 hover:border-maroon-700 hover:text-maroon-700 focus-visible:ring-gold-500',
             },
             size: {
                 default: 'h-10 px-4 py-2',
                 sm: 'h-9 rounded-md px-3',
                 lg: 'h-11 rounded-md px-8',
                 icon: 'h-10 w-10',
+                // 48px minimum touch target on the public site
+                brand: 'h-12 px-[22px] text-base [&_svg]:size-[18px]',
+                brandSm: 'h-10 px-4 text-[15px]',
+                brandLg: 'h-14 px-7 text-[17px] [&_svg]:size-[18px]',
             },
         },
         defaultVariants: {

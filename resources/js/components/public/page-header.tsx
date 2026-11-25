@@ -1,3 +1,4 @@
+import { langOf } from '@/lib/lang';
 import { cn } from '@/lib/utils';
 import { Link } from '@inertiajs/react';
 import { ChevronRight } from 'lucide-react';
@@ -27,7 +28,11 @@ export default function PageHeader({
     children?: ReactNode;
 }) {
     return (
-        <section className="bg-maroon-900 relative overflow-hidden bg-[url('/images/brand/maroon-waves.jpg')] bg-cover bg-center text-white">
+        <section className="bg-maroon-900 relative isolate overflow-hidden text-white">
+            <span
+                aria-hidden
+                className="absolute inset-0 -z-10 bg-[radial-gradient(70%_120%_at_100%_0%,rgb(229_185_76/0.18),transparent_55%),radial-gradient(60%_100%_at_0%_100%,var(--color-maroon-700),transparent_70%)]"
+            />
             <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-14">
                 <div className={cn('grid items-center gap-8', aside && 'lg:grid-cols-[1fr_22rem]')}>
                     <div>
@@ -52,8 +57,17 @@ export default function PageHeader({
                                 ))}
                             </ol>
                         </nav>
-                        <h1 className="text-3xl font-bold sm:text-5xl">{title}</h1>
-                        {subtitle && <p className="mt-4 max-w-2xl text-lg text-white/85">{subtitle}</p>}
+                        <h1
+                            {...langOf(title)}
+                            className="text-[34px] leading-tight font-extrabold tracking-tight sm:text-5xl [&[lang=si]]:leading-snug [&[lang=si]]:tracking-normal"
+                        >
+                            {title}
+                        </h1>
+                        {subtitle && (
+                            <p {...langOf(subtitle)} className="mt-4 max-w-2xl text-lg text-white/85">
+                                {subtitle}
+                            </p>
+                        )}
                     </div>
                     {aside}
                 </div>
