@@ -8,19 +8,30 @@
 
 @theme {
     --font-sans:
-        'Instrument Sans', 'Noto Sans Sinhala', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+        'Plus Jakarta Sans', 'Noto Sans Sinhala', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
         'Noto Color Emoji';
+    --font-sinhala: 'Noto Sans Sinhala', 'Iskoola Pota', ui-sans-serif, sans-serif;
 
-    /* Senanayake PPA brand: maroon and gold, from the association's site */
-    --color-maroon-50: #fbf2f4;
+    /* Senanayake PPA brand, from the design system (Heritage Maroon + Ceremonial Gold) */
+    --color-maroon-50: #fbf3f4;
     --color-maroon-100: #f5dfe4;
-    --color-maroon-700: #861a32;
-    --color-maroon-800: #6e1027;
-    --color-maroon-900: #5a0b1d;
-    --color-maroon-950: #3d0612;
+    --color-maroon-600: #7a1a2a;
+    --color-maroon-700: #5c111d;
+    --color-maroon-800: #4a0e17;
+    --color-maroon-900: #3a0a12;
+    --color-maroon-950: #2a060c;
+    --color-gold-100: #fbf3dc;
     --color-gold-300: #f0d27a;
-    --color-gold-400: #e0b54a;
-    --color-gold-500: #c9982b;
+    --color-gold-400: #e5b94c;
+    --color-gold-500: #d4a843;
+    /* text on gold fills, and gold-toned text on gold-100 (5.8:1) */
+    --color-gold-ink: #3a2a05;
+    --color-gold-text: #7a5a10;
+    /* slate 600: metadata on grey (#f3f4f6) sections, where #6b7280 fails AA */
+    --color-slate-strong: #4b5563;
+
+    --shadow-card: 0 1px 2px rgb(17 24 39 / 0.04), 0 8px 24px -8px rgb(17 24 39 / 0.1);
+    --shadow-lift: 0 2px 4px rgb(17 24 39 / 0.04), 0 24px 48px -16px rgb(74 14 23 / 0.22);
 
     --radius-lg: var(--radius);
     --radius-md: calc(var(--radius) - 2px);
@@ -173,6 +184,13 @@
 
     body {
         @apply bg-background text-foreground;
+    }
+
+    /* Sinhala script: no tracking and taller leading. Headings set their own leading. */
+    [lang='si'] {
+        font-family: var(--font-sinhala);
+        letter-spacing: 0;
+        line-height: 1.8;
     }
 }
 

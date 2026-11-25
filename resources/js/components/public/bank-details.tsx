@@ -10,7 +10,7 @@ export default function BankDetailsCard({ bank }: { bank: BankDetails }) {
     ];
 
     return (
-        <div className="bg-maroon-900 rounded-xl p-6 text-white">
+        <div id="give" className="bg-maroon-900 scroll-mt-24 rounded-xl p-6 text-white">
             <div className="flex items-center gap-2">
                 <Landmark className="text-gold-300 size-5" />
                 <h2 className="font-semibold">Official bank account</h2>

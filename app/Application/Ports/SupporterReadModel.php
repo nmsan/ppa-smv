@@ -21,6 +21,14 @@ interface SupporterReadModel
      */
     public function publicBoard(string $type): array;
 
+    /**
+     * For the home page: everything recorded (sponsorships and donations), how many supporters gave it,
+     * and the names of the largest supporters who agreed to be shown publicly.
+     *
+     * @return array{raised_cents: int, supporters: int, shown: list<string>}
+     */
+    public function publicTotals(int $names = 4): array;
+
     /** @return array{donation_cents: int, sponsorship_cents: int, count: int}|null what a member has given, if they are a supporter */
     public function givingOfMember(string $memberId): ?array;
 }

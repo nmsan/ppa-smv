@@ -20,7 +20,7 @@ export default function EditPageButton() {
     return (
         <Link
             href={target.href}
-            className="bg-gold-400 text-maroon-950 hover:bg-gold-300 fixed right-4 bottom-4 z-50 inline-flex items-center gap-2 rounded-full px-5 py-3 font-semibold shadow-lg ring-2 ring-white sm:right-6 sm:bottom-6"
+            className="bg-gold-400 text-maroon-950 hover:bg-gold-300 fixed right-4 bottom-[88px] z-50 inline-flex items-center gap-2 rounded-full px-5 py-3 font-semibold shadow-lg ring-2 ring-white sm:right-6 sm:bottom-6 md:bottom-6"
         >
             <Pencil className="size-4" />
             {target.label ?? 'Edit this page'}

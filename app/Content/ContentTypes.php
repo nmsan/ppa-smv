@@ -68,18 +68,15 @@ final class ContentTypes
             ],
             'home' => [
                 'label' => 'Home page',
-                'description' => 'Slider, anniversary banner, member numbers and the join box.',
+                'description' => 'Top banner, anniversary years, member numbers and the join box.',
                 'kind' => 'single',
                 'url' => '/',
                 'fields' => [
-                    ['name' => 'slides', 'label' => 'Slider', 'type' => 'repeater', 'item_label' => 'Slide', 'fields' => [
-                        ['name' => 'title', 'label' => 'Heading', 'type' => 'text', 'required' => true],
-                        ['name' => 'text', 'label' => 'Text', 'type' => 'textarea', 'required' => true],
-                        ['name' => 'cta', 'label' => 'Button', 'type' => 'group', 'fields' => [
-                            ['name' => 'label', 'label' => 'Button text', 'type' => 'text', 'required' => true],
-                            ['name' => 'href', 'label' => 'Button link (e.g. /projects)', 'type' => 'text', 'required' => true],
-                        ]],
-                        ['name' => 'image', 'label' => 'Background image', 'type' => 'image', 'required' => true],
+                    ['name' => 'hero', 'label' => 'Top banner', 'type' => 'group', 'fields' => [
+                        ['name' => 'headline', 'label' => 'Headline (the last word is shown in gold)', 'type' => 'text', 'required' => true],
+                        ['name' => 'text', 'label' => 'Text under the headline', 'type' => 'textarea', 'required' => true],
+                        ['name' => 'image', 'label' => 'Photo (wide, at least 1600px)', 'type' => 'image', 'required' => true],
+                        ['name' => 'caption', 'label' => 'Photo caption', 'type' => 'text'],
                     ]],
                     ['name' => 'anniversary', 'label' => 'Anniversary banner', 'type' => 'group', 'fields' => [
                         ['name' => 'title', 'label' => 'Title', 'type' => 'text', 'required' => true],

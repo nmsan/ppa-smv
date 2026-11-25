@@ -132,6 +132,28 @@ final class EloquentSupporterReadModel implements SupporterReadModel
             ->sortByDesc('total_cents')->values()->all();
     }
 
+    public function publicTotals(int $names = 4): array
+    {
+        $valid = $this->valid();
+        $bySupporter = $valid->groupBy('supporter_id')->map(fn ($lines) => (int) $lines->sum('amount_cents'));
+
+        $shown = SupporterModel::query()
+            ->where('show_publicly', true)
+            ->whereIn('id', $bySupporter->keys())
+            ->get(['id', 'name'])
+            ->sortByDesc(fn (SupporterModel $s) => $bySupporter->get($s->id, 0))
+            ->take($names)
+            ->pluck('name')
+            ->values()
+            ->all();
+
+        return [
+            'raised_cents' => (int) $valid->sum('amount_cents'),
+            'supporters' => $bySupporter->count(),
+            'shown' => $shown,
+        ];
+    }
+
     public function givingOfMember(string $memberId): ?array
     {
         $s = SupporterModel::query()->where('member_id', $memberId)->first();
