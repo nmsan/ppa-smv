@@ -11,23 +11,25 @@ use App\Domain\Membership\MembershipStatus;
 use Tests\Fakes\FakeClock;
 use Tests\Fakes\ImmediateUnitOfWork;
 use Tests\Fakes\InMemoryMemberRepository;
+use Tests\Fakes\InMemoryMembershipPlanRepository;
 use Tests\Fakes\SequenceNumberGenerator;
 use Tests\Fakes\SpyEventDispatcher;
 use Tests\Fakes\SpyNotifier;
 
 beforeEach(function () {
     $this->members = new InMemoryMemberRepository;
+    $this->plans = new InMemoryMembershipPlanRepository;
     $this->notifier = new SpyNotifier;
     $clock = new FakeClock;
     $events = new SpyEventDispatcher;
 
-    $this->applicantId = (new SubmitApplication($this->members, $clock, $events))->execute(
+    $this->applicantId = (new SubmitApplication($this->members, $this->plans, $clock, $events))->execute(
         new SubmitApplicationData(1, 'Kasun Perera', 'kasun@example.test', '0771234567', '199812345678', 2014, 2017),
     );
 
     // The legacy register already holds numbers up to M-270.
     $this->approve = new ApproveApplicant(
-        $this->members, new SequenceNumberGenerator(270), new ImmediateUnitOfWork, $clock, $events, $this->notifier,
+        $this->members, new SequenceNumberGenerator(270), $this->plans, new ImmediateUnitOfWork, $clock, $events, $this->notifier,
     );
 });
 

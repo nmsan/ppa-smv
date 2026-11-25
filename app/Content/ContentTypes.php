@@ -200,17 +200,12 @@ final class ContentTypes
             ],
             'membership' => [
                 'label' => 'Membership',
+                'description' => 'Constitution text on the Membership page. Fees are set by the treasurer under Membership plans.',
                 'kind' => 'single',
                 'url' => '/membership',
                 'fields' => [
                     ['name' => 'title', 'label' => 'Constitution heading', 'type' => 'text', 'required' => true],
                     ['name' => 'intro', 'label' => 'Introduction', 'type' => 'textarea', 'required' => true],
-                    ['name' => 'fees', 'label' => 'Fees', 'type' => 'repeater', 'item_label' => 'Fee', 'fields' => [
-                        ['name' => 'name', 'label' => 'Name', 'type' => 'text', 'required' => true],
-                        ['name' => 'sinhala', 'label' => 'Name in Sinhala', 'type' => 'text'],
-                        ['name' => 'amount', 'label' => 'Amount (e.g. Rs. 1,000.00)', 'type' => 'text', 'required' => true],
-                        ['name' => 'period', 'label' => 'Period (e.g. per year)', 'type' => 'text', 'required' => true],
-                    ]],
                     ['name' => 'sections', 'label' => 'Constitution clauses', 'type' => 'repeater', 'item_label' => 'Section', 'fields' => [
                         ['name' => 'number', 'label' => 'Number', 'type' => 'text', 'required' => true],
                         ['name' => 'title', 'label' => 'Title', 'type' => 'text', 'required' => true],

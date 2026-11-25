@@ -25,6 +25,7 @@ final readonly class MyMembershipView
         public ?string $country,
         public string $since,
         public bool $fromRegister,
+        public ?int $feeCents = null,
     ) {}
 
     public static function from(Member $m): self
@@ -49,6 +50,7 @@ final readonly class MyMembershipView
             country: $m->profile->country,
             since: ($m->approvedAt() ?? $m->appliedAt)->format('Y-m-d'),
             fromRegister: $m->source === 'register',
+            feeCents: $m->fee()?->cents,
         );
     }
 }

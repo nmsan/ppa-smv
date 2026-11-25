@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Member;
 
 use App\Application\Membership\UseCases\ClaimRegisterRecord;
 use App\Application\Membership\UseCases\GetMyMembership;
+use App\Application\Membership\UseCases\ListMembershipPlans;
 use App\Application\Membership\UseCases\SubmitApplication;
 use App\Application\Membership\UseCases\UpdateMyDetails;
 use App\Application\Ports\SupporterReadModel;
@@ -19,7 +20,7 @@ use Inertia\Response;
 /** "My membership": join, check approval, or keep your details up to date. One page for every stage. */
 class MyMembershipController extends Controller
 {
-    public function show(Request $request, GetMyMembership $getMyMembership, SupporterReadModel $supporters): Response
+    public function show(Request $request, GetMyMembership $getMyMembership, SupporterReadModel $supporters, ListMembershipPlans $plans): Response
     {
         $membership = $getMyMembership->execute($request->user()->id);
 
@@ -27,6 +28,8 @@ class MyMembershipController extends Controller
             'membership' => $membership,
             // What they have given, once the treasurer links their supporter account to their membership.
             'giving' => $membership ? $supporters->givingOfMember($membership->id) : null,
+            // The plans someone can ask for, with today's fee.
+            'plans' => $plans->execute(),
         ]);
     }
 
@@ -34,7 +37,7 @@ class MyMembershipController extends Controller
     {
         $submitApplication->execute($request->toData());
 
-        return to_route('my-membership')->with('success', 'Application submitted. Your batch representative will review it.');
+        return to_route('my-membership')->with('success', 'Request sent. The committee will review it, and an office bearer will contact you about the fee.');
     }
 
     public function update(UpdateMyDetailsRequest $request, UpdateMyDetails $updateMyDetails): RedirectResponse

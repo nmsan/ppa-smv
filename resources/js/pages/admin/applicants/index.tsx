@@ -3,8 +3,11 @@ import FlashMessage from '@/components/domain/flash-message';
 import HeadingSmall from '@/components/heading-small';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
 import AppLayout from '@/layouts/app-layout';
+import { lkr } from '@/lib/money';
 import { type BreadcrumbItem } from '@/types';
+import { categoryLabel, type MembershipPlan } from '@/types/membership';
 import { Head, router, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 
@@ -19,23 +22,32 @@ interface Applicant {
     batchKey: number | null;
     appliedAt: string;
     canApprove: boolean;
+    category: string;
+    feeCents: number | null;
+    phone: string | null;
 }
 
 function formatDate(iso: string) {
     return new Date(iso + 'T00:00:00').toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
 }
 
-export default function Applicants({ applicants, nextNumber }: { applicants: Applicant[]; nextNumber: string }) {
+export default function Applicants({ applicants, nextNumber, plans }: { applicants: Applicant[]; nextNumber: string; plans: MembershipPlan[] }) {
     const { errors } = usePage().props as { errors: Record<string, string> };
     const [selected, setSelected] = useState<Applicant | null>(null);
     const [processing, setProcessing] = useState(false);
+    const [as, setAs] = useState('');
+    const open = (a: Applicant) => {
+        setAs(a.category);
+        setSelected(a);
+    };
+    const chosenPlan = plans.find((p) => p.category === as);
 
     const approve = () => {
         if (!selected) return;
         setProcessing(true);
         router.post(
             route('admin.applicants.approve', selected.id),
-            {},
+            { category: as },
             {
                 preserveScroll: true,
                 onSuccess: () => setSelected(null),
@@ -50,7 +62,10 @@ export default function Applicants({ applicants, nextNumber }: { applicants: App
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Applicants" />
             <div className="space-y-6 p-4">
-                <HeadingSmall title="Applicants waiting for approval" description="Approving an applicant issues the next membership number." />
+                <HeadingSmall
+                    title="Membership requests waiting for review"
+                    description="Approving a request issues the next membership number. An office bearer then contacts the person to collect the fee."
+                />
                 <FlashMessage />
                 <InputError message={errors.form} />
                 {applicants.length === 0 ? (
@@ -61,7 +76,8 @@ export default function Applicants({ applicants, nextNumber }: { applicants: App
                             <thead className="bg-muted/50 text-left">
                                 <tr>
                                     <th className="px-4 py-2 font-medium">Name</th>
-                                    <th className="px-4 py-2 font-medium">Email</th>
+                                    <th className="px-4 py-2 font-medium">Contact</th>
+                                    <th className="px-4 py-2 font-medium">Requested</th>
                                     <th className="px-4 py-2 font-medium">O/L</th>
                                     <th className="px-4 py-2 font-medium">A/L</th>
                                     <th className="px-4 py-2 font-medium">Batch</th>
@@ -73,14 +89,23 @@ export default function Applicants({ applicants, nextNumber }: { applicants: App
                                 {applicants.map((a) => (
                                     <tr key={a.id} className="border-t">
                                         <td className="px-4 py-2">{a.fullName}</td>
-                                        <td className="px-4 py-2">{a.email}</td>
+                                        <td className="px-4 py-2">
+                                            <span className="block">{a.email}</span>
+                                            {a.phone && <span className="text-muted-foreground block">{a.phone}</span>}
+                                        </td>
+                                        <td className="px-4 py-2 whitespace-nowrap">
+                                            <span className="block font-medium">{categoryLabel[a.category] ?? a.category}</span>
+                                            {a.feeCents !== null && (
+                                                <span className="text-muted-foreground block tabular-nums">{lkr(a.feeCents)}</span>
+                                            )}
+                                        </td>
                                         <td className="px-4 py-2">{a.olYear ?? '–'}</td>
                                         <td className="px-4 py-2">{a.alYear ?? '–'}</td>
                                         <td className="px-4 py-2">{a.batchKey}</td>
                                         <td className="px-4 py-2">{a.appliedAt}</td>
                                         <td className="px-4 py-2 text-right">
                                             {a.canApprove && (
-                                                <Button size="sm" onClick={() => setSelected(a)}>
+                                                <Button size="sm" onClick={() => open(a)}>
                                                     Approve
                                                 </Button>
                                             )}
@@ -95,7 +120,7 @@ export default function Applicants({ applicants, nextNumber }: { applicants: App
                     open={selected !== null}
                     onOpenChange={(open) => !open && setSelected(null)}
                     title="Approve this applicant?"
-                    description="They become a member of the association straight away."
+                    description="They get a membership number now. An office bearer then collects the fee, and the membership becomes active once the treasurer records it."
                     confirmLabel={`Approve as ${nextNumber}`}
                     processing={processing}
                     onConfirm={approve}
@@ -113,6 +138,28 @@ export default function Applicants({ applicants, nextNumber }: { applicants: App
                             <dt className="text-muted-foreground">Membership number</dt>
                             <dd className="font-semibold">{nextNumber}</dd>
                         </dl>
+                    )}
+                    {selected && (
+                        <div className="grid gap-2">
+                            <Label htmlFor="approve-as">Approve as</Label>
+                            <select
+                                id="approve-as"
+                                className="border-input h-9 w-full rounded-md border bg-transparent px-3 text-sm"
+                                value={as}
+                                onChange={(e) => setAs(e.target.value)}
+                            >
+                                {plans.map((p) => (
+                                    <option key={p.category} value={p.category}>
+                                        {p.name} ({lkr(p.feeCents)}){p.category === selected.category ? ', as requested' : ''}
+                                    </option>
+                                ))}
+                            </select>
+                            <p className="text-muted-foreground text-xs">
+                                {as !== selected.category && chosenPlan
+                                    ? `The fee changes to ${lkr(chosenPlan.feeCents)}.`
+                                    : 'Life membership needs continuous membership for the period the committee sets (clause 4.3.1).'}
+                            </p>
+                        </div>
                     )}
                 </ConfirmDialog>
             </div>

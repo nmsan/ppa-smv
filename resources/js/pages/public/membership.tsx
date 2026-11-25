@@ -5,48 +5,42 @@ import PublicLayout from '@/layouts/public-layout';
 import { langOf } from '@/lib/lang';
 import { cn } from '@/lib/utils';
 import { type SharedData } from '@/types';
+import { type MembershipPlan } from '@/types/membership';
 import { Link, usePage } from '@inertiajs/react';
-import { ArrowRight, BadgeCheck, Check, FileText, UserPlus } from 'lucide-react';
-
-interface Fee {
-    name: string;
-    sinhala: string;
-    amount: string;
-    period: string;
-}
+import { ArrowRight, BadgeCheck, Check, FileText, HandCoins, UserPlus } from 'lucide-react';
 
 interface Props {
     membership: {
         title: string;
         intro: string;
         sections: { number: string; title: string; clauses: { number: string; text: string }[] }[];
-        fees: Fee[];
     };
+    /** Set by the treasurer under Membership plans; only plans open for requests are sent. */
+    plans: MembershipPlan[];
 }
 
-/** "Rs. 15,000.00" → ["Rs.", "15,000"]: the currency small, the number large, cents dropped when zero. */
-function splitAmount(amount: string): [string, string] {
-    const m = amount.match(/^\s*([^\d]*?)\s*([\d,]+)(\.\d+)?\s*$/);
-    if (!m) return ['', amount];
-    const cents = m[3] && !/^\.0+$/.test(m[3]) ? m[3] : '';
-    return [m[1], m[2] + cents];
+/** 1500000 cents → "15,000" (cents shown only when there are any). */
+function rupees(cents: number): string {
+    return (cents / 100).toLocaleString('en-LK', { minimumFractionDigits: cents % 100 ? 2 : 0, maximumFractionDigits: 2 });
 }
-
-/** A one-time fee (life membership) is the highlighted card. */
-const isOneTime = (fee: Fee) => /one|once|life/i.test(fee.period);
 
 // Facts from the constitution (clause 4.2), shared by every paid membership.
 const eligibility = ['Open to anyone who studied at the college for at least one year', 'Applications are approved by the executive committee'];
 
 const steps = [
     { Icon: UserPlus, title: 'Create your account', text: 'Sign up with your email address. It takes a minute.' },
-    { Icon: FileText, title: 'Send your application', text: 'Add your phone or NIC and your O/L and A/L years.' },
-    { Icon: BadgeCheck, title: 'Committee approval', text: 'The executive committee checks and approves it, and you get your membership number.' },
+    { Icon: FileText, title: 'Send your request', text: 'Choose annual or life membership, and add your phone or NIC and your O/L and A/L years.' },
+    { Icon: BadgeCheck, title: 'Committee review', text: 'The executive committee reviews it and gives you a membership number.' },
+    {
+        Icon: HandCoins,
+        title: 'Pay the fee',
+        text: 'An office bearer contacts you to collect it by cash, bank transfer or cheque. Then your membership is active.',
+    },
 ];
 
-function FeeCard({ fee, cta }: { fee: Fee; cta: { href: string; label: string } }) {
-    const featured = isOneTime(fee);
-    const [currency, value] = splitAmount(fee.amount);
+function FeeCard({ plan, cta }: { plan: MembershipPlan; cta: { href: string; label: string } }) {
+    // A one-time fee (life membership) is the highlighted card.
+    const featured = !plan.recurring;
 
     return (
         <article
@@ -60,10 +54,10 @@ function FeeCard({ fee, cta }: { fee: Fee; cta: { href: string; label: string } 
             {featured && <span aria-hidden className="border-gold-400/15 absolute -top-14 -right-14 size-48 rounded-full border-[30px]" />}
             <div className="relative flex items-start justify-between gap-4">
                 <div>
-                    <h3 className={cn('text-xl font-bold', featured ? 'text-white' : 'text-neutral-900')}>{fee.name}</h3>
-                    {fee.sinhala && (
+                    <h3 className={cn('text-xl font-bold', featured ? 'text-white' : 'text-neutral-900')}>{plan.name}</h3>
+                    {plan.nameSi && (
                         <p lang="si" className={cn('mt-0.5 text-base', featured ? 'text-gold-400' : 'text-maroon-700')}>
-                            {fee.sinhala}
+                            {plan.nameSi}
                         </p>
                     )}
                 </div>
@@ -78,10 +72,12 @@ function FeeCard({ fee, cta }: { fee: Fee; cta: { href: string; label: string } 
             </div>
 
             <p className="relative mt-7 flex items-baseline gap-1.5">
-                {currency && <span className={cn('text-xl font-bold', featured ? 'text-white/70' : 'text-neutral-500')}>{currency}</span>}
-                <span className="text-5xl font-extrabold tracking-[-0.03em] tabular-nums">{value}</span>
+                <span className={cn('text-xl font-bold', featured ? 'text-white/70' : 'text-neutral-500')}>Rs.</span>
+                <span className="text-5xl font-extrabold tracking-[-0.03em] tabular-nums">{rupees(plan.feeCents)}</span>
             </p>
-            <p className={cn('relative mt-1 text-[15px]', featured ? 'text-white/75' : 'text-neutral-500')}>{fee.period}</p>
+            <p className={cn('relative mt-1 text-[15px]', featured ? 'text-white/75' : 'text-neutral-500')}>
+                {plan.recurring ? 'per year' : 'one-time payment'}
+            </p>
 
             <ul className={cn('relative mt-7 space-y-3 border-t pt-6', featured ? 'border-white/15' : 'border-neutral-200')}>
                 {eligibility.map((e) => (
@@ -110,9 +106,9 @@ function FeeCard({ fee, cta }: { fee: Fee; cta: { href: string; label: string } 
     );
 }
 
-export default function Membership({ membership }: Props) {
+export default function Membership({ membership, plans }: Props) {
     const { auth } = usePage<SharedData>().props;
-    const apply = auth.user ? { href: '/my-membership', label: 'Apply now' } : { href: '/register', label: 'Become a member' };
+    const apply = auth.user ? { href: '/my-membership', label: 'Send a request' } : { href: '/register', label: 'Become a member' };
 
     return (
         <PublicLayout title="Membership">
@@ -131,9 +127,9 @@ export default function Membership({ membership }: Props) {
                     >
                         Choose your membership
                     </SectionTitle>
-                    <div className="mx-auto grid max-w-5xl gap-6 md:grid-cols-2">
-                        {membership.fees.map((f) => (
-                            <FeeCard key={f.name} fee={f} cta={apply} />
+                    <div className={cn('mx-auto grid gap-6', plans.length > 1 ? 'max-w-5xl md:grid-cols-2' : 'max-w-xl')}>
+                        {plans.map((p) => (
+                            <FeeCard key={p.category} plan={p} cta={apply} />
                         ))}
                     </div>
                     <p className="mx-auto mt-6 max-w-5xl text-center text-[15px] text-neutral-500">
@@ -148,8 +144,13 @@ export default function Membership({ membership }: Props) {
                 {/* How to join */}
                 <section className="bg-neutral-100">
                     <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 md:py-20">
-                        <SectionTitle kicker="How to join">Three steps, all online</SectionTitle>
-                        <ol className="grid gap-5 md:grid-cols-3">
+                        <SectionTitle
+                            kicker="How to join"
+                            description="Nothing is paid online. An office bearer collects the fee once your request is approved."
+                        >
+                            Four simple steps
+                        </SectionTitle>
+                        <ol className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
                             {steps.map(({ Icon, title, text }, i) => (
                                 <li key={title} className="rounded-[22px] border border-neutral-200 bg-white p-6 shadow-sm">
                                     <div className="flex items-center gap-3">

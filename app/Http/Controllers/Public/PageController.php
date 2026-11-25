@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Public;
 
+use App\Application\Membership\UseCases\ListMembershipPlans;
 use App\Application\Ports\DashboardQueries;
 use App\Application\Ports\SupporterReadModel;
 use App\Http\Controllers\Controller;
@@ -61,9 +62,13 @@ class PageController extends Controller
         return Inertia::render('public/association/office-bearers', ['editContent' => 'office-bearers', 'content' => SiteContent::get('office-bearers')]);
     }
 
-    public function membership(): Response
+    public function membership(ListMembershipPlans $plans): Response
     {
-        return Inertia::render('public/membership', ['editContent' => 'membership', 'membership' => SiteContent::get('membership')]);
+        return Inertia::render('public/membership', ['editContent' => 'membership',
+            'membership' => SiteContent::get('membership'),
+            // Fees come from the treasurer's membership plans, not the page text.
+            'plans' => $plans->execute(),
+        ]);
     }
 
     public function projects(): Response

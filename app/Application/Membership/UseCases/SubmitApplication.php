@@ -6,14 +6,17 @@ use App\Application\Membership\DTO\SubmitApplicationData;
 use App\Application\Ports\Clock;
 use App\Application\Ports\EventDispatcher;
 use App\Application\Ports\MemberRepository;
+use App\Application\Ports\MembershipPlanRepository;
 use App\Application\Shared\ConflictException;
 use App\Domain\Membership\Batch;
 use App\Domain\Membership\Member;
+use App\Domain\Shared\DomainRuleViolation;
 
 final readonly class SubmitApplication
 {
     public function __construct(
         private MemberRepository $members,
+        private MembershipPlanRepository $plans,
         private Clock $clock,
         private EventDispatcher $events,
     ) {}
@@ -29,6 +32,9 @@ final readonly class SubmitApplication
             throw new ConflictException('This NIC is already registered. If you are already a member, use "Find my record" instead.');
         }
 
+        $plan = $this->plans->findByCategory($data->category)
+            ?? throw new DomainRuleViolation('Please choose annual or life membership.');
+
         $member = Member::apply(
             $this->members->nextId(),
             $data->userId,
@@ -37,6 +43,7 @@ final readonly class SubmitApplication
             $data->phone,
             $data->nic,
             Batch::of($data->olYear, $data->alYear),
+            $plan,
             $this->clock->now(),
         );
 
