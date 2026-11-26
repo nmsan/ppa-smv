@@ -130,11 +130,19 @@ export default function Principals({ content }: Props) {
             <PageHeader title="Principals of the college" subtitle={content.subtitle} crumbs={[{ title: 'College' }, { title: 'Principals' }]} />
 
             <Section className="pb-6 sm:pb-8">
-                <figure className="bg-maroon-900 relative overflow-hidden rounded-[28px] px-7 py-10 text-white sm:px-12 sm:py-14">
-                    <svg viewBox="0 0 48 48" fill="currentColor" aria-hidden className="text-gold-400/30 absolute top-6 right-8 size-24">
-                        <path d="M10 36c-3.3 0-6-2.9-6-7 0-8.6 5.4-15.4 13.4-19l1.6 2.6C13.9 15.4 11 19.2 10.6 23c.5-.2 1.1-.3 1.8-.3 3.6 0 6.2 2.6 6.2 6.4 0 4-3.3 6.9-8.6 6.9Zm21 0c-3.3 0-6-2.9-6-7 0-8.6 5.4-15.4 13.4-19L40 12.6C34.9 15.4 32 19.2 31.6 23c.5-.2 1.1-.3 1.8-.3 3.6 0 6.2 2.6 6.2 6.4 0 4-3.3 6.9-8.6 6.9Z" />
-                    </svg>
-                    <blockquote {...langOf(content.message.text)} className="relative max-w-3xl text-lg leading-relaxed sm:text-xl">
+                {/* Capped to the timeline's width below, which keeps the quote's lines a readable length. */}
+                <figure className="bg-maroon-900 relative mx-auto max-w-5xl overflow-hidden rounded-[28px] px-7 py-10 text-white sm:px-12 sm:py-14">
+                    <blockquote {...langOf(content.message.text)} className="flow-root text-lg leading-relaxed sm:text-xl">
+                        {/* The quote mark floats in the text, so the opening lines wrap around it. The viewBox is cropped
+                            to the glyph so the float is exactly as big as what is drawn. */}
+                        <svg
+                            viewBox="4 10 36 26"
+                            fill="currentColor"
+                            aria-hidden
+                            className="text-gold-400/30 float-right -mt-3 ml-3 w-12 sm:ml-4 sm:w-[72px]"
+                        >
+                            <path d="M10 36c-3.3 0-6-2.9-6-7 0-8.6 5.4-15.4 13.4-19l1.6 2.6C13.9 15.4 11 19.2 10.6 23c.5-.2 1.1-.3 1.8-.3 3.6 0 6.2 2.6 6.2 6.4 0 4-3.3 6.9-8.6 6.9Zm21 0c-3.3 0-6-2.9-6-7 0-8.6 5.4-15.4 13.4-19L40 12.6C34.9 15.4 32 19.2 31.6 23c.5-.2 1.1-.3 1.8-.3 3.6 0 6.2 2.6 6.2 6.4 0 4-3.3 6.9-8.6 6.9Z" />
+                        </svg>
                         {content.message.text}
                     </blockquote>
                     <figcaption className="relative mt-6 flex items-center gap-4">
