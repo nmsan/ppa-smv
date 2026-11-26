@@ -1,5 +1,5 @@
 import PageHeader from '@/components/public/page-header';
-import { formatDate, Section, SectionTitle } from '@/components/public/section';
+import { Section, SectionTitle } from '@/components/public/section';
 import PublicLayout from '@/layouts/public-layout';
 import { langOf } from '@/lib/lang';
 import { cn } from '@/lib/utils';
@@ -30,11 +30,6 @@ interface Term extends Principal {
 
 const isDate = (v: string | null): v is string => !!v && /^\d{4}-\d{2}-\d{2}$/.test(v);
 const yearOf = (v: string | null) => (v ? v.slice(0, 4) : null);
-
-function fromLabel(v: string | null): string {
-    if (!v) return 'Date not recorded';
-    return isDate(v) ? formatDate(v) : v;
-}
 
 /** "1956 – 1959", "2024 – Present" or "1987-1989". */
 function yearsLabel(t: Term, present: boolean): string {
@@ -123,12 +118,12 @@ export default function Principals({ content }: Props) {
                     Those who have led us
                 </SectionTitle>
 
-                <ol className="grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-5 lg:grid-cols-4 xl:grid-cols-5">
+                <ol className="grid gap-3 sm:grid-cols-2 sm:gap-4 xl:grid-cols-3">
                     {list.map((t, i) =>
                         t.name === null ? (
                             <li
                                 key={`gap-${i}`}
-                                className="col-span-2 flex flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed border-neutral-300 bg-neutral-50 p-6 text-center sm:col-span-3 lg:col-span-4 xl:col-span-5"
+                                className="flex flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-neutral-300 bg-neutral-50 p-5 text-center sm:col-span-2 xl:col-span-3"
                             >
                                 <ShieldAlert className="size-6 text-neutral-400" />
                                 <p className="font-semibold text-neutral-700">{t.from}</p>
@@ -142,34 +137,33 @@ export default function Principals({ content }: Props) {
                             <li
                                 key={`${t.number}-${i}`}
                                 className={cn(
-                                    'group flex flex-col overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-black/5 transition hover:-translate-y-0.5 hover:shadow-md',
-                                    t.present && 'ring-gold-400 ring-2',
+                                    'flex items-center gap-4 rounded-2xl bg-white p-3 pr-4 shadow-sm ring-1 ring-black/5 transition hover:-translate-y-0.5 hover:shadow-md',
+                                    t.present && 'ring-gold-400 bg-gold-100/50 ring-2',
                                 )}
                             >
-                                <div className="relative">
-                                    <Portrait p={t} large={t.present} className="aspect-[4/5] w-full" />
-                                    <span className="text-maroon-900 absolute top-3 left-3 rounded-full bg-white/95 px-2.5 py-0.5 text-xs font-bold shadow-sm">
-                                        No. {t.number ?? '–'}
-                                    </span>
-                                    {t.present && (
-                                        <span className="bg-gold-400 text-maroon-950 absolute top-3 right-3 rounded-full px-2.5 py-0.5 text-xs font-bold shadow-sm">
-                                            Present
-                                        </span>
-                                    )}
-                                    <span className="absolute right-0 bottom-0 left-0 bg-gradient-to-t from-black/70 to-transparent px-3 pt-8 pb-2.5 text-sm font-semibold text-white tabular-nums">
-                                        {yearsLabel(t, t.present)}
+                                <div className="relative shrink-0">
+                                    <Portrait p={t} large={t.present} className="size-20 rounded-xl sm:size-24" />
+                                    <span className="bg-maroon-900 absolute -bottom-1.5 -left-1.5 flex size-8 items-center justify-center rounded-full text-xs font-bold text-white tabular-nums ring-2 ring-white">
+                                        {t.number ?? '–'}
                                     </span>
                                 </div>
-                                <div className="flex min-w-0 flex-1 flex-col gap-1 p-4">
-                                    <h3 {...langOf(t.name)} className="font-semibold text-neutral-900">
+                                <div className="min-w-0 flex-1">
+                                    <h3 {...langOf(t.name)} className="leading-snug font-semibold text-neutral-900">
                                         {t.name}
                                     </h3>
+                                    <p className="text-maroon-700 mt-1 flex flex-wrap items-center gap-2 text-sm font-semibold tabular-nums">
+                                        {yearsLabel(t, t.present)}
+                                        {t.present && (
+                                            <span className="bg-gold-400 text-maroon-950 rounded-full px-2 py-0.5 text-[10px] font-bold tracking-wide uppercase">
+                                                Current
+                                            </span>
+                                        )}
+                                    </p>
                                     {t.note && (
-                                        <p {...langOf(t.note)} className="text-maroon-700 text-sm">
+                                        <p {...langOf(t.note)} className="mt-0.5 line-clamp-2 text-xs text-neutral-500">
                                             {t.note}
                                         </p>
                                     )}
-                                    <p className="mt-auto pt-1 text-xs text-neutral-500">From {fromLabel(t.from)}</p>
                                 </div>
                             </li>
                         ),
