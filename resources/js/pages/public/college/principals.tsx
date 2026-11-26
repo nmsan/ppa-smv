@@ -1,9 +1,11 @@
 import PageHeader from '@/components/public/page-header';
 import { Section, SectionTitle } from '@/components/public/section';
+import { useReveal } from '@/hooks/use-reveal';
 import PublicLayout from '@/layouts/public-layout';
 import { langOf } from '@/lib/lang';
 import { cn } from '@/lib/utils';
 import { ShieldAlert } from 'lucide-react';
+import { type ReactNode, useEffect, useRef } from 'react';
 
 interface Principal {
     number: number | null;
@@ -73,12 +75,55 @@ function Portrait({ p, className, large = false }: { p: Principal; className?: s
     );
 }
 
+/** A timeline row that animates in the first time it scrolls into view. */
+function RevealRow({ side, className, children }: { side: 'left' | 'right' | 'center'; className?: string; children: ReactNode }) {
+    const { ref, reveal } = useReveal<HTMLLIElement>(0.25);
+    return (
+        <li ref={ref} data-reveal={reveal} data-side={side} className={className}>
+            {children}
+        </li>
+    );
+}
+
+/** Fills the gold spine down to the middle of the viewport as the list scrolls. */
+function useSpineProgress() {
+    const listRef = useRef<HTMLOListElement>(null);
+    const fillRef = useRef<HTMLSpanElement>(null);
+
+    useEffect(() => {
+        const list = listRef.current;
+        const fill = fillRef.current;
+        if (!list || !fill) return;
+        let frame = 0;
+        const update = () => {
+            frame = 0;
+            const box = list.getBoundingClientRect();
+            const progress = Math.min(1, Math.max(0, (window.innerHeight * 0.6 - box.top) / box.height));
+            fill.style.transform = `scaleY(${progress})`;
+        };
+        const onScroll = () => {
+            if (!frame) frame = requestAnimationFrame(update);
+        };
+        update();
+        window.addEventListener('scroll', onScroll, { passive: true });
+        window.addEventListener('resize', onScroll);
+        return () => {
+            cancelAnimationFrame(frame);
+            window.removeEventListener('scroll', onScroll);
+            window.removeEventListener('resize', onScroll);
+        };
+    }, []);
+
+    return { listRef, fillRef };
+}
+
 export default function Principals({ content }: Props) {
     // Stored oldest first; each term ends when the next one begins.
     const terms: Term[] = content.principals.map((p, i, all) => ({ ...p, to: all[i + 1]?.from ?? null }));
     const presentIndex = terms.findLastIndex((t) => t.name !== null);
     // Newest first, the present principal leading the list.
     const list = terms.map((t, i) => ({ ...t, present: i === presentIndex })).reverse();
+    const { listRef, fillRef } = useSpineProgress();
 
     return (
         <PublicLayout title="Principals">
@@ -118,56 +163,103 @@ export default function Principals({ content }: Props) {
                     Those who have led us
                 </SectionTitle>
 
-                <ol className="grid gap-3 sm:grid-cols-2 sm:gap-4 xl:grid-cols-3">
-                    {list.map((t, i) =>
-                        t.name === null ? (
-                            <li
-                                key={`gap-${i}`}
-                                className="flex flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-neutral-300 bg-neutral-50 p-5 text-center sm:col-span-2 xl:col-span-3"
-                            >
-                                <ShieldAlert className="size-6 text-neutral-400" />
-                                <p className="font-semibold text-neutral-700">{t.from}</p>
-                                {t.note && (
-                                    <p {...langOf(t.note)} className="text-neutral-600">
-                                        {t.note}
-                                    </p>
-                                )}
-                            </li>
-                        ) : (
-                            <li
+                <ol ref={listRef} className="relative mx-auto max-w-5xl">
+                    {/* The spine: left on phones, centred from md up; the gold fill follows the scroll. */}
+                    <span aria-hidden className="absolute top-2 bottom-2 left-[19px] w-0.5 bg-neutral-200 md:left-1/2 md:-translate-x-1/2">
+                        <span
+                            ref={fillRef}
+                            className="from-gold-400 to-maroon-700 absolute inset-0 origin-top bg-gradient-to-b will-change-transform"
+                            style={{ transform: 'scaleY(0)' }}
+                        />
+                    </span>
+                    {list.map((t, i) => {
+                        if (t.name === null) {
+                            return (
+                                <RevealRow key={`gap-${i}`} side="center" className="relative py-5 pl-14 md:flex md:justify-center md:pl-0">
+                                    <span
+                                        aria-hidden
+                                        className="tl-node absolute top-1/2 left-[11px] flex size-[18px] -translate-y-1/2 items-center justify-center rounded-full border-2 border-dashed border-neutral-400 bg-neutral-50 md:left-1/2 md:-translate-x-1/2"
+                                    />
+                                    <div className="tl-card relative flex max-w-md items-start gap-3 rounded-xl border border-dashed border-neutral-300 bg-neutral-50 px-4 py-3 md:mt-8 md:text-center">
+                                        <ShieldAlert className="mt-0.5 size-5 shrink-0 text-neutral-400 md:hidden" />
+                                        <div>
+                                            <p className="text-sm font-semibold text-neutral-700 tabular-nums">{t.from}</p>
+                                            {t.note && (
+                                                <p {...langOf(t.note)} className="text-sm text-neutral-600">
+                                                    {t.note}
+                                                </p>
+                                            )}
+                                        </div>
+                                    </div>
+                                </RevealRow>
+                            );
+                        }
+
+                        const right = i % 2 === 1;
+                        const year = t.from && isDate(t.from) ? yearOf(t.from) : t.from;
+
+                        return (
+                            <RevealRow
                                 key={`${t.number}-${i}`}
-                                className={cn(
-                                    'flex items-center gap-4 rounded-2xl bg-white p-3 pr-4 shadow-sm ring-1 ring-black/5 transition hover:-translate-y-0.5 hover:shadow-md',
-                                    t.present && 'ring-gold-400 bg-gold-100/50 ring-2',
-                                )}
+                                side={right ? 'right' : 'left'}
+                                className="relative py-3 pl-14 md:grid md:grid-cols-[1fr_4rem_1fr] md:items-center md:pl-0"
                             >
-                                <div className="relative shrink-0">
-                                    <Portrait p={t} large={t.present} className="size-20 rounded-xl sm:size-24" />
-                                    <span className="bg-maroon-900 absolute -bottom-1.5 -left-1.5 flex size-8 items-center justify-center rounded-full text-xs font-bold text-white tabular-nums ring-2 ring-white">
-                                        {t.number ?? '–'}
-                                    </span>
-                                </div>
-                                <div className="min-w-0 flex-1">
-                                    <h3 {...langOf(t.name)} className="leading-snug font-semibold text-neutral-900">
-                                        {t.name}
-                                    </h3>
-                                    <p className="text-maroon-700 mt-1 flex flex-wrap items-center gap-2 text-sm font-semibold tabular-nums">
-                                        {yearsLabel(t, t.present)}
-                                        {t.present && (
-                                            <span className="bg-gold-400 text-maroon-950 rounded-full px-2 py-0.5 text-[10px] font-bold tracking-wide uppercase">
-                                                Current
-                                            </span>
-                                        )}
-                                    </p>
-                                    {t.note && (
-                                        <p {...langOf(t.note)} className="mt-0.5 line-clamp-2 text-xs text-neutral-500">
-                                            {t.note}
-                                        </p>
+                                {/* Node on the spine, carrying the principal's number. */}
+                                <span
+                                    className={cn(
+                                        'tl-node absolute top-1/2 left-0 z-10 flex size-10 -translate-y-1/2 items-center justify-center rounded-full text-sm font-bold tabular-nums ring-4 ring-neutral-50 md:static md:col-start-2 md:row-start-1 md:mx-auto md:translate-y-0',
+                                        t.present ? 'bg-gold-400 text-maroon-950 tl-pulse' : 'bg-maroon-900 text-white',
                                     )}
-                                </div>
-                            </li>
-                        ),
-                    )}
+                                >
+                                    {t.number ?? '–'}
+                                </span>
+
+                                {/* Start year, on the side opposite the card (desktop only). */}
+                                <p
+                                    aria-hidden
+                                    className={cn(
+                                        'tl-year text-maroon-900/15 hidden text-5xl font-black tracking-tight tabular-nums md:row-start-1 md:block',
+                                        right ? 'md:col-start-1 md:pr-6 md:text-right' : 'md:col-start-3 md:pl-6',
+                                    )}
+                                >
+                                    {year}
+                                </p>
+
+                                <article
+                                    className={cn(
+                                        'tl-card relative flex items-center gap-4 rounded-2xl bg-white p-3 pr-4 shadow-sm ring-1 ring-black/5 md:row-start-1',
+                                        right ? 'md:col-start-3' : 'md:col-start-1 md:flex-row-reverse md:text-right',
+                                        t.present && 'ring-gold-400 ring-2',
+                                    )}
+                                >
+                                    <Portrait p={t} large={t.present} className="tl-photo size-16 shrink-0 rounded-full sm:size-20" />
+                                    <div className="min-w-0 flex-1">
+                                        <h3 {...langOf(t.name)} className="leading-snug font-semibold text-neutral-900">
+                                            {t.name}
+                                        </h3>
+                                        <p
+                                            className={cn(
+                                                'text-maroon-700 mt-1 flex flex-wrap items-center gap-2 text-sm font-semibold tabular-nums',
+                                                !right && 'md:justify-end',
+                                            )}
+                                        >
+                                            {yearsLabel(t, t.present)}
+                                            {t.present && (
+                                                <span className="bg-gold-400 text-maroon-950 rounded-full px-2 py-0.5 text-[10px] font-bold tracking-wide uppercase">
+                                                    Current
+                                                </span>
+                                            )}
+                                        </p>
+                                        {t.note && (
+                                            <p {...langOf(t.note)} className="mt-0.5 line-clamp-2 text-xs text-neutral-500">
+                                                {t.note}
+                                            </p>
+                                        )}
+                                    </div>
+                                </article>
+                            </RevealRow>
+                        );
+                    })}
                 </ol>
             </Section>
         </PublicLayout>

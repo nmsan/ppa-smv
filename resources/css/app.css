@@ -317,3 +317,130 @@
         transform: scaleX(1);
     }
 }
+
+/* ---------- Principals timeline ---------- */
+@layer components {
+    [data-reveal='hidden'] :is(.tl-card, .tl-node, .tl-year) {
+        opacity: 0;
+    }
+
+    /* Cards slide in from their side (from the right on phones, where the spine is on the left). */
+    [data-reveal='shown'] .tl-card {
+        --tl-from: 28px;
+        animation: tl-slide 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) 0.12s backwards;
+    }
+
+    @media (width >= 48rem) {
+        [data-side='left'] .tl-card {
+            --tl-from: -40px;
+        }
+
+        [data-side='right'] .tl-card {
+            --tl-from: 40px;
+        }
+
+        [data-side='center'] .tl-card {
+            --tl-from: 0px;
+        }
+    }
+
+    [data-reveal='shown'] .tl-node {
+        animation: tl-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+    }
+
+    [data-reveal='shown'] .tl-year {
+        animation: tl-fade 1s ease-out 0.3s backwards;
+    }
+
+    .tl-card {
+        transition:
+            transform 0.25s ease,
+            box-shadow 0.25s ease;
+    }
+
+    .tl-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 14px 30px -14px rgb(90 11 29 / 0.35);
+    }
+
+    .tl-photo {
+        transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .tl-card:hover .tl-photo {
+        transform: scale(1.06) rotate(-2deg);
+    }
+
+    /* A soft gold halo breathing around the current principal's node. */
+    .tl-pulse::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        border-radius: 9999px;
+        box-shadow: 0 0 0 0 rgb(229 185 76 / 0.6);
+        animation: tl-halo 2.2s ease-out infinite;
+    }
+
+    .tl-pulse {
+        position: relative;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        [data-reveal] :is(.tl-card, .tl-node, .tl-year) {
+            animation: none !important;
+            opacity: 1 !important;
+        }
+
+        .tl-card,
+        .tl-card:hover,
+        .tl-card:hover .tl-photo {
+            transition: none;
+            transform: none;
+        }
+
+        .tl-pulse::after {
+            animation: none;
+        }
+    }
+}
+
+@keyframes tl-slide {
+    from {
+        opacity: 0;
+        transform: translateX(var(--tl-from)) scale(0.97);
+    }
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+@keyframes tl-pop {
+    from {
+        opacity: 0;
+        transform: scale(0.3);
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes tl-fade {
+    from {
+        opacity: 0;
+        letter-spacing: 0.2em;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes tl-halo {
+    0% {
+        box-shadow: 0 0 0 0 rgb(229 185 76 / 0.6);
+    }
+    80%,
+    100% {
+        box-shadow: 0 0 0 14px rgb(229 185 76 / 0);
+    }
+}
