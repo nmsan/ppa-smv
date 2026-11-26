@@ -51,7 +51,6 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                             type="email"
                             required
                             autoFocus
-                            tabIndex={1}
                             autoComplete="email"
                             value={data.email}
                             onChange={(e) => setData('email', e.target.value)}
@@ -66,7 +65,7 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                                 Password
                             </Label>
                             {canResetPassword && (
-                                <TextLink href={route('password.request')} className="text-maroon-700 ml-auto text-sm" tabIndex={5}>
+                                <TextLink href={route('password.request')} className="text-maroon-700 ml-auto text-sm">
                                     Forgot password?
                                 </TextLink>
                             )}
@@ -76,7 +75,6 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                             id="password"
                             type="password"
                             required
-                            tabIndex={2}
                             autoComplete="current-password"
                             value={data.password}
                             onChange={(e) => setData('password', e.target.value)}
@@ -89,7 +87,6 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                         <Checkbox
                             id="remember"
                             name="remember"
-                            tabIndex={3}
                             checked={data.remember}
                             onCheckedChange={(v) => setData('remember', v === true)}
                             className="data-[state=checked]:bg-maroon-800 data-[state=checked]:border-maroon-800"
@@ -97,7 +94,7 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                         <Label htmlFor="remember">Remember me</Label>
                     </div>
 
-                    <Button type="submit" variant="maroon" size="brand" className="mt-2 w-full" tabIndex={4} disabled={processing}>
+                    <Button type="submit" variant="maroon" size="brand" className="mt-2 w-full" disabled={processing}>
                         {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
                         Log in
                     </Button>
@@ -105,7 +102,7 @@ export default function Login({ status, canResetPassword }: LoginProps) {
 
                 <div className="text-center text-[15px] text-neutral-600">
                     Don't have an account?{' '}
-                    <TextLink href={route('register')} className="text-maroon-700 decoration-maroon-700/30 font-semibold" tabIndex={5}>
+                    <TextLink href={route('register')} className="text-maroon-700 decoration-maroon-700/30 font-semibold">
                         Sign up
                     </TextLink>
                 </div>

@@ -7,9 +7,10 @@ export function Section({ children, className }: { children: ReactNode; classNam
 }
 
 /** Small uppercase label with a gold rule, used above section headings. */
-export function Kicker({ children, className }: { children: string; className?: string }) {
+/** Pass `as="h2"` when the kicker is the only title a section has, so it shows up in the heading outline. */
+export function Kicker({ children, className, as: Tag = 'p' }: { children: string; className?: string; as?: 'p' | 'h2' }) {
     return (
-        <p
+        <Tag
             {...langOf(children)}
             className={cn(
                 'text-maroon-700 inline-flex items-center gap-2.5 text-[13px] font-bold tracking-[0.14em] uppercase',
@@ -18,7 +19,7 @@ export function Kicker({ children, className }: { children: string; className?: 
             )}
         >
             {children}
-        </p>
+        </Tag>
     );
 }
 

@@ -54,7 +54,7 @@ export default function LeadershipMessage({ message }: Props) {
             </div>
 
             <figure>
-                <Kicker>A message to our past pupils</Kicker>
+                <Kicker as="h2">A message to our past pupils</Kicker>
                 <svg viewBox="0 0 48 48" fill="currentColor" aria-hidden className="text-gold-500 mt-5 mb-3 size-12">
                     <path d="M10 36c-3.3 0-6-2.9-6-7 0-8.6 5.4-15.4 13.4-19l1.6 2.6C13.9 15.4 11 19.2 10.6 23c.5-.2 1.1-.3 1.8-.3 3.6 0 6.2 2.6 6.2 6.4 0 4-3.3 6.9-8.6 6.9Zm21 0c-3.3 0-6-2.9-6-7 0-8.6 5.4-15.4 13.4-19L40 12.6C34.9 15.4 32 19.2 31.6 23c.5-.2 1.1-.3 1.8-.3 3.6 0 6.2 2.6 6.2 6.4 0 4-3.3 6.9-8.6 6.9Z" />
                 </svg>

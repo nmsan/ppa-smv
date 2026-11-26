@@ -73,10 +73,10 @@ function FooterLinks({ title, links }: { title: string; links: { title: string; 
     return (
         <div>
             <h2 className="mb-4 text-sm font-bold tracking-[0.12em] text-white uppercase">{title}</h2>
-            <ul className="space-y-2.5">
+            <ul className="space-y-0.5 sm:space-y-2.5">
                 {links.map((l) => (
                     <li key={l.href}>
-                        <Link href={l.href} className="hover:text-gold-400">
+                        <Link href={l.href} className="hover:text-gold-400 flex min-h-11 items-center sm:inline sm:min-h-0">
                             {l.title}
                         </Link>
                     </li>

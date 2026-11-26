@@ -95,7 +95,8 @@ function FeeCard({ plan, cta }: { plan: MembershipPlan; cta: { href: string; lab
             </ul>
 
             <div className="relative mt-auto pt-8">
-                <Button asChild variant="gold" size="brand" className="w-full">
+                {/* One gold button per view: the featured (life) plan gets it. */}
+                <Button asChild variant={featured ? 'gold' : 'maroon'} size="brand" className="w-full">
                     <Link href={cta.href}>
                         {cta.label}
                         <ArrowRight />

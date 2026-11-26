@@ -41,7 +41,9 @@ export default function Projects({ projects, bank }: { projects: Project[]; bank
                     ))}
                 </div>
                 <aside className="space-y-6 self-start lg:sticky lg:top-24">
-                    <BankDetailsCard bank={bank} />
+                    <div id="give" className="scroll-mt-24">
+                        <BankDetailsCard bank={bank} />
+                    </div>
                     <div className="rounded-xl bg-white p-6 shadow-sm ring-1 ring-black/5">
                         <h2 className="text-maroon-900 font-semibold">Thank you to our supporters</h2>
                         <ul className="mt-3 space-y-2 text-sm">
