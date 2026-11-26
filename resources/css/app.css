@@ -177,6 +177,54 @@
     --sidebar-ring: hsl(217.2, 91.2%, 59.8%);
 }
 
+/*
+ * The public site is light only. Pages on it that reuse the app's form controls
+ * (My account) wrap them in .theme-light so they stay light when someone has
+ * picked dark mode for the admin portal. Tailwind reads the --color-* tokens,
+ * which are resolved at :root, so those are set here too.
+ */
+.theme-light {
+    --background: hsl(0, 0%, 100%);
+    --color-background: hsl(0, 0%, 100%);
+    --foreground: hsl(0, 0%, 3.9%);
+    --color-foreground: hsl(0, 0%, 3.9%);
+    --card: hsl(0, 0%, 100%);
+    --color-card: hsl(0, 0%, 100%);
+    --card-foreground: hsl(0, 0%, 3.9%);
+    --color-card-foreground: hsl(0, 0%, 3.9%);
+    --popover: hsl(0, 0%, 100%);
+    --color-popover: hsl(0, 0%, 100%);
+    --popover-foreground: hsl(0, 0%, 3.9%);
+    --color-popover-foreground: hsl(0, 0%, 3.9%);
+    --primary: var(--color-maroon-800);
+    --color-primary: var(--color-maroon-800);
+    --primary-foreground: hsl(0, 0%, 100%);
+    --color-primary-foreground: hsl(0, 0%, 100%);
+    --secondary: hsl(0, 0%, 96.1%);
+    --color-secondary: hsl(0, 0%, 96.1%);
+    --secondary-foreground: hsl(0, 0%, 9%);
+    --color-secondary-foreground: hsl(0, 0%, 9%);
+    --muted: hsl(0, 0%, 96.1%);
+    --color-muted: hsl(0, 0%, 96.1%);
+    --muted-foreground: hsl(0, 0%, 40%);
+    --color-muted-foreground: hsl(0, 0%, 40%);
+    --accent: hsl(0, 0%, 96.1%);
+    --color-accent: hsl(0, 0%, 96.1%);
+    --accent-foreground: hsl(0, 0%, 9%);
+    --color-accent-foreground: hsl(0, 0%, 9%);
+    --destructive: hsl(0, 72%, 45%);
+    --color-destructive: hsl(0, 72%, 45%);
+    --destructive-foreground: hsl(0, 0%, 98%);
+    --color-destructive-foreground: hsl(0, 0%, 98%);
+    --border: hsl(0, 0%, 89.8%);
+    --color-border: hsl(0, 0%, 89.8%);
+    --input: hsl(0, 0%, 83%);
+    --color-input: hsl(0, 0%, 83%);
+    --ring: var(--color-gold-500);
+    --color-ring: var(--color-gold-500);
+    color-scheme: light;
+}
+
 @layer base {
     * {
         @apply border-border;

@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Domain\Access\Role;
 use App\Support\SiteContent;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Http\Request;
@@ -46,6 +47,7 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $request->user(),
                 'roles' => $request->user()?->getRoleNames() ?? [],
+                'adminPortal' => (bool) $request->user()?->hasAnyRole(Role::adminPortalNames()),
             ],
             'site' => fn () => SiteContent::get('site'),
             'flash' => [

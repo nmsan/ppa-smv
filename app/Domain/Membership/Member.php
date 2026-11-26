@@ -177,6 +177,42 @@ final class Member
         ]);
     }
 
+    /**
+     * The membership secretary corrects a record. Unlike the person's own
+     * update nothing is locked: name, NIC, batch and plan can all change.
+     * Changing the plan also sets the fee to that plan's ($fee), or none for honorary.
+     */
+    public function correctedBySecretary(MemberDetails $d, MemberProfile $profile, MembershipCategory $category, ?Money $fee): self
+    {
+        $name = trim(preg_replace('/\s+/', ' ', $d->fullName));
+        if ($name === '') {
+            throw new DomainRuleViolation('Full name is required.');
+        }
+
+        $copy = $this->copy([
+            'fullName' => $name,
+            'email' => $d->email ? strtolower(trim($d->email)) : null,
+            'phone' => $d->phone ? trim($d->phone) : null,
+            'nic' => $d->nic ? strtoupper(preg_replace('/\s+/', '', $d->nic)) : null,
+            'batch' => $d->batch,
+            'profile' => new MemberProfile(
+                gender: $profile->gender,
+                whatsapp: $d->whatsapp ? trim($d->whatsapp) : null,
+                country: $d->country ? trim($d->country) : null,
+                admissionNumber: $profile->admissionNumber ? trim($profile->admissionNumber) : null,
+                joinedVia: $this->profile->joinedVia,
+                fee2024: $this->profile->fee2024,
+            ),
+        ]);
+
+        if ($category !== $this->category) {
+            $copy->category = $category;
+            $copy->fee = $fee;
+        }
+
+        return $copy;
+    }
+
     /** Links a record from the old register to the account of the person it belongs to. */
     public function linkToAccount(int $userId, ?string $accountEmail): self
     {

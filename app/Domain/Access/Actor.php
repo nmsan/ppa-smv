@@ -28,6 +28,12 @@ final readonly class Actor
         return $batch !== null && $this->has(Role::BatchRepresentative) && $this->batchKey === $batch->key();
     }
 
+    /** Correcting any member's record (name, NIC, batch, plan) is for the secretary and super admins. */
+    public function canEditMembers(): bool
+    {
+        return $this->has(Role::SuperAdmin) || $this->has(Role::MembershipSecretary);
+    }
+
     public function canReviewApplicants(): bool
     {
         return $this->has(Role::SuperAdmin)

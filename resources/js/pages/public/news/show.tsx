@@ -5,6 +5,8 @@ import { type NewsItem } from '@/types/public';
 import { Link } from '@inertiajs/react';
 
 export default function NewsShow({ item, others }: { item: NewsItem; others: NewsItem[] }) {
+    const gallery = item.gallery ?? [];
+
     return (
         <PublicLayout title={item.title}>
             <PageHeader title={item.title} crumbs={[{ title: 'News and events', href: '/news' }, { title: item.title }]} />
@@ -34,6 +36,20 @@ export default function NewsShow({ item, others }: { item: NewsItem; others: New
                             )}
                         </div>
                     </article>
+
+                    {gallery.length > 0 && (
+                        <div>
+                            <h2 className="text-maroon-900 mb-4 text-xl font-bold">Photos</h2>
+                            <div className="grid gap-4 sm:grid-cols-2">
+                                {gallery.map((g, i) => (
+                                    <figure key={i} className="overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-black/5">
+                                        <img src={g.image} alt={g.caption ?? ''} className="aspect-[4/3] w-full object-cover" loading="lazy" />
+                                        {g.caption && <figcaption className="p-3 text-sm text-neutral-600">{g.caption}</figcaption>}
+                                    </figure>
+                                ))}
+                            </div>
+                        </div>
+                    )}
 
                     <Link href="/news" className="text-maroon-800 inline-block text-sm font-semibold hover:underline">
                         ← All news and events

@@ -46,8 +46,8 @@ it('shows content editors the website section but no membership numbers', functi
             ->missing('dashboard.roles'));
 });
 
-it('shows ordinary members only their own membership and events', function () {
-    $user = userWith(Role::Member);
+it('shows a treasurer their own membership and events but no membership numbers', function () {
+    $user = userWith(Role::Treasurer);
     MemberModel::query()->where('membership_number', 'M-002')->update(['user_id' => $user->id]);
 
     $this->actingAs($user)->get('/dashboard')

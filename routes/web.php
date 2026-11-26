@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Route;
 
 require __DIR__.'/public.php';
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'admin-portal'])->group(function () {
     Route::get('dashboard', DashboardController::class)->name('dashboard');
 });
 

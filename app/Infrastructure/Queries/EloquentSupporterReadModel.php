@@ -7,6 +7,8 @@ use App\Infrastructure\Persistence\Eloquent\Models\ContributionModel;
 use App\Infrastructure\Persistence\Eloquent\Models\FundraisingEventModel;
 use App\Infrastructure\Persistence\Eloquent\Models\SupporterModel;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 final class EloquentSupporterReadModel implements SupporterReadModel
 {
@@ -24,17 +26,39 @@ final class EloquentSupporterReadModel implements SupporterReadModel
         return $s->member?->batch_key ? "A/L {$s->member->batch_key}" : $s->public_note;
     }
 
+    /**
+     * Profile photo URLs of the user accounts linked to these members, keyed by member id.
+     *
+     * @param  iterable<int, string|null>  $memberIds
+     * @return Collection<string, string>
+     */
+    private function avatarsFor(iterable $memberIds): Collection
+    {
+        $ids = collect($memberIds)->filter()->unique()->values();
+        if ($ids->isEmpty()) {
+            return collect();
+        }
+
+        return DB::table('members')->join('users', 'users.id', '=', 'members.user_id')
+            ->whereIn('members.id', $ids)->whereNotNull('users.avatar_path')
+            ->pluck('users.avatar_path', 'members.id')
+            ->map(fn (string $path) => Storage::disk('public')->url($path));
+    }
+
     public function supporters(): array
     {
         $bySupporter = $this->valid()->groupBy('supporter_id');
+        $supporters = SupporterModel::query()->with('member:id,membership_number,batch_key')->orderBy('name')->get();
+        $avatars = $this->avatarsFor($supporters->pluck('member_id'));
 
-        return SupporterModel::query()->with('member:id,membership_number,batch_key')->orderBy('name')->get()
-            ->map(function (SupporterModel $s) use ($bySupporter) {
+        return $supporters
+            ->map(function (SupporterModel $s) use ($bySupporter, $avatars) {
                 $lines = $bySupporter->get($s->id, collect());
 
                 return [
                     'id' => $s->id,
                     'name' => $s->name,
+                    'avatar' => $avatars->get($s->member_id),
                     'kind' => $s->kind,
                     'member_number' => $s->member?->membership_number,
                     'note' => $this->noteFor($s),
@@ -69,6 +93,7 @@ final class EloquentSupporterReadModel implements SupporterReadModel
             'member' => $s->member ? [
                 'number' => $s->member->membership_number,
                 'name' => $s->member->full_name,
+                'avatar' => $this->avatarsFor([$s->member_id])->first(),
                 'batch' => $s->member->batch_key,
                 'status' => $s->member->status,
             ] : null,
@@ -114,12 +139,17 @@ final class EloquentSupporterReadModel implements SupporterReadModel
     {
         $bySupporter = $this->valid()->where('type', $type)->groupBy('supporter_id');
 
-        return SupporterModel::query()->with('member:id,batch_key')->where('show_publicly', true)->get()
-            ->map(function (SupporterModel $s) use ($bySupporter, $type) {
+        $supporters = SupporterModel::query()->with('member:id,batch_key')->where('show_publicly', true)->get();
+        // Only supporters who agreed to be listed publicly reach this page, so their member photo can show too.
+        $avatars = $this->avatarsFor($supporters->pluck('member_id'));
+
+        return $supporters
+            ->map(function (SupporterModel $s) use ($bySupporter, $type, $avatars) {
                 $lines = $bySupporter->get($s->id, collect());
 
                 return [
                     'name' => $s->name,
+                    'avatar' => $avatars->get($s->member_id),
                     'note' => $this->noteFor($s),
                     'total_cents' => (int) $lines->sum('amount_cents'),
                     'events' => $lines->groupBy(fn ($c) => $c->event?->name ?? self::GENERAL[$type])

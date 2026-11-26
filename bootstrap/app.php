@@ -4,6 +4,7 @@ use App\Application\Shared\ConflictException;
 use App\Application\Shared\ForbiddenException;
 use App\Application\Shared\NotFoundException;
 use App\Domain\Shared\DomainRuleViolation;
+use App\Http\Middleware\EnsureAdminPortalAccess;
 use App\Http\Middleware\HandleInertiaRequests;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -23,6 +24,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->alias([
             'role' => RoleMiddleware::class,
+            'admin-portal' => EnsureAdminPortalAccess::class,
         ]);
 
         $middleware->web(append: [

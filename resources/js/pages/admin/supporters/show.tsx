@@ -3,6 +3,7 @@ import FlashMessage from '@/components/domain/flash-message';
 import FormErrorSummary, { focusFirstError } from '@/components/domain/form-error-summary';
 import HeadingSmall from '@/components/heading-small';
 import InputError from '@/components/input-error';
+import PersonAvatar from '@/components/person-avatar';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
@@ -38,7 +39,7 @@ interface Account {
         notes: string | null;
         show_publicly: boolean;
     };
-    member: { number: string; name: string; batch: number | null; status: string } | null;
+    member: { number: string; name: string; avatar: string | null; batch: number | null; status: string } | null;
     total_cents: number;
     sponsorship_cents: number;
     donation_cents: number;
@@ -367,10 +368,18 @@ export default function SupporterAccount({ account, events, today }: { account: 
         >
             <Head title={supporter.name} />
             <div className="max-w-5xl space-y-6 p-4">
-                <HeadingSmall
-                    title={supporter.name}
-                    description={supporter.kind === 'individual' ? 'Individual supporter' : 'Business or organisation'}
-                />
+                <div className="flex items-center gap-4">
+                    <PersonAvatar
+                        name={supporter.name}
+                        src={account.member?.avatar}
+                        organisation={supporter.kind !== 'individual'}
+                        className="size-14 [&>span]:text-base"
+                    />
+                    <HeadingSmall
+                        title={supporter.name}
+                        description={supporter.kind === 'individual' ? 'Individual supporter' : 'Business or organisation'}
+                    />
+                </div>
                 <FlashMessage />
 
                 <div className="grid gap-4 md:grid-cols-[18rem_1fr]">

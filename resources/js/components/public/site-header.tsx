@@ -69,9 +69,16 @@ export default function SiteHeader() {
 
                 <div className="ml-auto hidden items-center gap-2 sm:flex xl:ml-3">
                     {auth.user ? (
-                        <Button asChild variant="gold" size="brandSm">
-                            <Link href="/dashboard">My account</Link>
-                        </Button>
+                        <>
+                            {auth.adminPortal && (
+                                <Button asChild variant="pill" size="brandSm">
+                                    <Link href="/dashboard">Admin portal</Link>
+                                </Button>
+                            )}
+                            <Button asChild variant="gold" size="brandSm">
+                                <Link href="/my-membership">My account</Link>
+                            </Button>
+                        </>
                     ) : (
                         <>
                             <Button asChild variant="pill" size="brandSm">
@@ -122,9 +129,16 @@ export default function SiteHeader() {
                             )}
                             <div className="mt-5 flex gap-2">
                                 {auth.user ? (
-                                    <Button asChild variant="gold" size="brand" className="flex-1">
-                                        <Link href="/dashboard">My account</Link>
-                                    </Button>
+                                    <>
+                                        {auth.adminPortal && (
+                                            <Button asChild variant="pill" size="brand" className="flex-1">
+                                                <Link href="/dashboard">Admin</Link>
+                                            </Button>
+                                        )}
+                                        <Button asChild variant="gold" size="brand" className="flex-1">
+                                            <Link href="/my-membership">My account</Link>
+                                        </Button>
+                                    </>
                                 ) : (
                                     <>
                                         <Button asChild variant="pill" size="brand" className="flex-1">

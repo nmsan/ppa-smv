@@ -90,6 +90,7 @@ it('adds an upcoming event with an uploaded poster and shows it on the home page
         'deadline' => null,
         'image' => $path,
         'body' => ['All past pupils are welcome.', ''],
+        'gallery' => [],
     ]])->assertRedirect('/admin/content/news');
 
     SiteContent::flush();
@@ -114,7 +115,7 @@ it('deletes and reorders news', function () {
     expect(ContentEntry::query()->where('type', 'news')->orderBy('position')->first()->id)->toBe($entries[1]->id);
 
     $this->delete("/admin/content/news/{$entries[0]->id}")->assertRedirect('/admin/content/news');
-    expect(ContentEntry::query()->where('type', 'news')->count())->toBe(2);
+    expect(ContentEntry::query()->where('type', 'news')->count())->toBe($entries->count() - 1);
 });
 
 it('returns 404 for unknown content types and wrong entry types', function () {

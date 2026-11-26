@@ -6,6 +6,7 @@ use App\Application\Ports\ActorResolver;
 use App\Application\Ports\Clock;
 use App\Application\Ports\DashboardQueries;
 use App\Application\Ports\EventDispatcher;
+use App\Application\Ports\MemberDirectory;
 use App\Application\Ports\MemberRepository;
 use App\Application\Ports\MembershipNumberGenerator;
 use App\Application\Ports\MembershipPaymentRepository;
@@ -22,6 +23,7 @@ use App\Infrastructure\Persistence\EloquentMembershipPaymentRepository;
 use App\Infrastructure\Persistence\EloquentMembershipPlanRepository;
 use App\Infrastructure\Persistence\EloquentSupporterRepository;
 use App\Infrastructure\Queries\EloquentDashboardQueries;
+use App\Infrastructure\Queries\EloquentMemberDirectory;
 use App\Infrastructure\Queries\EloquentSupporterReadModel;
 use App\Infrastructure\System\DatabaseUnitOfWork;
 use App\Infrastructure\System\LaravelEventDispatcher;
@@ -45,5 +47,6 @@ class DomainServiceProvider extends ServiceProvider
         SupporterReadModel::class => EloquentSupporterReadModel::class,
         MembershipPlanRepository::class => EloquentMembershipPlanRepository::class,
         MembershipPaymentRepository::class => EloquentMembershipPaymentRepository::class,
+        MemberDirectory::class => EloquentMemberDirectory::class,
     ];
 }

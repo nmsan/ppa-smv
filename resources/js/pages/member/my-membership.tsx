@@ -1,20 +1,17 @@
 import FlashMessage from '@/components/domain/flash-message';
 import FormErrorSummary, { focusFirstError } from '@/components/domain/form-error-summary';
-import HeadingSmall from '@/components/heading-small';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import AppLayout from '@/layouts/app-layout';
+import AccountLayout, { AccountCard } from '@/layouts/account-layout';
 import { lkr } from '@/lib/money';
 import { cn } from '@/lib/utils';
-import { type BreadcrumbItem, type SharedData } from '@/types';
+import { type SharedData } from '@/types';
 import { categoryLabel, type MembershipPlan } from '@/types/membership';
-import { Head, useForm, usePage } from '@inertiajs/react';
-import { BadgeCheck, Clock, HandCoins, HandHeart, IdCard, LoaderCircle, Lock, Search, UserPlus } from 'lucide-react';
+import { useForm, usePage } from '@inertiajs/react';
+import { BadgeCheck, Clock, HandCoins, HandHeart, LoaderCircle, Lock, Search, UserPlus } from 'lucide-react';
 import { type ComponentProps, type FormEventHandler, useState } from 'react';
-
-const breadcrumbs: BreadcrumbItem[] = [{ title: 'My membership', href: '/my-membership' }];
 
 interface Membership {
     status: 'applied' | 'approved' | 'active' | 'expiring' | 'lapsed' | 'rejected';
@@ -127,8 +124,8 @@ function Join({ plans }: { plans: MembershipPlan[] }) {
             onClick={() => setMode(key)}
             aria-pressed={mode === key}
             className={cn(
-                'flex gap-3 rounded-xl border p-4 text-left transition-colors',
-                mode === key ? 'border-primary ring-primary ring-1' : 'hover:bg-muted/50',
+                'flex gap-3 rounded-2xl border bg-white p-4 text-left transition-colors',
+                mode === key ? 'border-maroon-800 ring-maroon-800 ring-1' : 'border-neutral-200 hover:border-neutral-300',
             )}
         >
             <Icon className="mt-0.5 size-5 shrink-0" />
@@ -141,13 +138,13 @@ function Join({ plans }: { plans: MembershipPlan[] }) {
 
     return (
         <div className="space-y-6">
-            <div className="rounded-xl border p-5">
+            <AccountCard>
                 <p className="text-muted-foreground text-sm">Your account is ready</p>
                 <p className="mt-1 text-xl font-semibold">One more step to become a member</p>
                 <p className="text-muted-foreground mt-1 text-sm">
                     Membership is open to anyone who studied at Senanayake Central College for at least one year.
                 </p>
-            </div>
+            </AccountCard>
 
             <div className="grid gap-3 sm:grid-cols-2">
                 {choice('new', UserPlus, "I'm joining for the first time", 'Choose annual or life membership and send your request for review.')}
@@ -155,7 +152,11 @@ function Join({ plans }: { plans: MembershipPlan[] }) {
             </div>
 
             {mode === 'new' ? (
-                <form onSubmit={submitApply} className="space-y-5 rounded-xl border p-5" noValidate>
+                <form
+                    onSubmit={submitApply}
+                    className="space-y-5 rounded-2xl border border-neutral-200 bg-white p-5 shadow-[var(--shadow-card)] sm:p-6"
+                    noValidate
+                >
                     <FormErrorSummary errors={apply.errors} action="sent" />
                     <fieldset className="space-y-3">
                         <legend className="text-sm font-medium">Membership you are asking for</legend>
@@ -164,8 +165,10 @@ function Join({ plans }: { plans: MembershipPlan[] }) {
                                 <label
                                     key={p.category}
                                     className={cn(
-                                        'flex cursor-pointer gap-3 rounded-xl border p-4 transition-colors',
-                                        apply.data.category === p.category ? 'border-primary ring-primary ring-1' : 'hover:bg-muted/50',
+                                        'flex cursor-pointer gap-3 rounded-2xl border bg-white p-4 transition-colors',
+                                        apply.data.category === p.category
+                                            ? 'border-maroon-800 ring-maroon-800 ring-1'
+                                            : 'border-neutral-200 hover:border-neutral-300',
                                     )}
                                 >
                                     <input
@@ -209,7 +212,11 @@ function Join({ plans }: { plans: MembershipPlan[] }) {
                     <SubmitButton processing={apply.processing}>Send my request</SubmitButton>
                 </form>
             ) : (
-                <form onSubmit={submitClaim} className="space-y-5 rounded-xl border p-5" noValidate>
+                <form
+                    onSubmit={submitClaim}
+                    className="space-y-5 rounded-2xl border border-neutral-200 bg-white p-5 shadow-[var(--shadow-card)] sm:p-6"
+                    noValidate
+                >
                     <FormErrorSummary errors={claim.errors} action="found" />
                     <TextField
                         of={claim}
@@ -253,7 +260,7 @@ function Details({ m }: { m: Membership }) {
 
     return (
         <div className="space-y-6">
-            <div className={cn('flex gap-4 rounded-xl border p-5', m.status === 'applied' && 'border-amber-500/50 bg-amber-50 dark:bg-amber-950/30')}>
+            <AccountCard className={cn('flex gap-4', m.status === 'applied' && 'border-amber-500/50 bg-amber-50')}>
                 {isMember ? <BadgeCheck className="size-8 shrink-0 text-green-700" /> : <Clock className="size-8 shrink-0 text-amber-600" />}
                 <div>
                     <p className="text-muted-foreground text-sm">{status.title}</p>
@@ -264,11 +271,15 @@ function Details({ m }: { m: Membership }) {
                         {m.batchKey && ` · A/L ${m.batchKey} batch`}
                     </p>
                 </div>
-            </div>
+            </AccountCard>
 
             <FeeCard m={m} />
 
-            <form onSubmit={submit} className="space-y-6 rounded-xl border p-5" noValidate>
+            <form
+                onSubmit={submit}
+                className="space-y-6 rounded-2xl border border-neutral-200 bg-white p-5 shadow-[var(--shadow-card)] sm:p-6"
+                noValidate
+            >
                 <h2 className="font-semibold">Your details</h2>
                 <FormErrorSummary errors={form.errors} action="saved" />
 
@@ -323,7 +334,7 @@ function FeeCard({ m }: { m: Membership }) {
     const plan = `${categoryLabel[m.category] ?? m.category} membership`;
 
     return (
-        <div className="flex gap-4 rounded-xl border p-5">
+        <AccountCard className="flex gap-4">
             <HandCoins className="text-maroon-700 size-8 shrink-0" />
             <div>
                 <p className="text-muted-foreground text-sm">{plan} fee</p>
@@ -337,7 +348,7 @@ function FeeCard({ m }: { m: Membership }) {
                         : 'An office bearer will contact you to collect the fee by cash, bank transfer or cheque. Your membership becomes active once the treasurer records it.'}
                 </p>
             </div>
-        </div>
+        </AccountCard>
     );
 }
 
@@ -352,7 +363,7 @@ function GivingCard({ giving }: { giving: Giving }) {
     if (giving.count === 0) return null;
 
     return (
-        <div className="border-gold-400/60 bg-gold-300/10 flex gap-4 rounded-xl border p-5">
+        <AccountCard className="border-gold-400/60 bg-gold-100/60 flex gap-4">
             <HandHeart className="text-maroon-700 size-8 shrink-0" />
             <div>
                 <p className="text-muted-foreground text-sm">Thank you for giving back</p>
@@ -365,7 +376,7 @@ function GivingCard({ giving }: { giving: Giving }) {
                     .
                 </p>
             </div>
-        </div>
+        </AccountCard>
     );
 }
 
@@ -378,29 +389,21 @@ export default function MyMembership({
     giving: Giving | null;
     plans: MembershipPlan[];
 }) {
+    const subtitle = !membership
+        ? 'Join the association, or link your existing membership.'
+        : membership.status === 'applied'
+          ? `Request sent on ${formatDate(membership.since)}`
+          : membership.fromRegister
+            ? "Member of the Past Pupils' Association, carried over from the association register"
+            : `Member of the Past Pupils' Association since ${formatDate(membership.since)}`;
+
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="My membership" />
-            <div className="max-w-3xl space-y-6 p-4">
-                <div className="flex items-center gap-3">
-                    <IdCard className="text-muted-foreground size-6" />
-                    <HeadingSmall
-                        title="My membership"
-                        description={
-                            !membership
-                                ? 'Join the association, or link your existing membership.'
-                                : membership.status === 'applied'
-                                  ? `Request sent on ${formatDate(membership.since)}`
-                                  : membership.fromRegister
-                                    ? "Member of the Past Pupils' Association, carried over from the association register"
-                                    : `Member of the Past Pupils' Association since ${formatDate(membership.since)}`
-                        }
-                    />
-                </div>
+        <AccountLayout title="My membership" subtitle={subtitle}>
+            <div className="space-y-6">
                 <FlashMessage />
                 {giving && <GivingCard giving={giving} />}
                 {membership ? <Details m={membership} /> : <Join plans={plans} />}
             </div>
-        </AppLayout>
+        </AccountLayout>
     );
 }

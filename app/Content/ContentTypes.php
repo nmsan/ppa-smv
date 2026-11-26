@@ -44,6 +44,10 @@ final class ContentTypes
                     ['name' => 'deadline', 'label' => 'Closing date (notices)', 'type' => 'date'],
                     ['name' => 'image', 'label' => 'Image', 'type' => 'image'],
                     ['name' => 'body', 'label' => 'Paragraphs', 'type' => 'list', 'required' => true],
+                    ['name' => 'gallery', 'label' => 'More photos', 'type' => 'repeater', 'item_label' => 'Photo', 'fields' => [
+                        ['name' => 'image', 'label' => 'Photo', 'type' => 'image', 'required' => true],
+                        ['name' => 'caption', 'label' => 'Caption', 'type' => 'text'],
+                    ]],
                 ],
             ],
             'projects' => [
@@ -132,7 +136,9 @@ final class ContentTypes
                     ['name' => 'school', 'label' => 'About the school', 'type' => 'list', 'required' => true],
                     ['name' => 'founder', 'label' => 'Founder', 'type' => 'group', 'fields' => [
                         ['name' => 'name', 'label' => 'Name', 'type' => 'text', 'required' => true],
+                        ['name' => 'title', 'label' => 'Titles (shown under the name)', 'type' => 'text'],
                         ['name' => 'image', 'label' => 'Image', 'type' => 'image', 'required' => true],
+                        ['name' => 'paragraphs', 'label' => 'About the founder (paragraphs)', 'type' => 'list'],
                     ]],
                     ['name' => 'kannangara', 'label' => 'Dr. C. W. W. Kannangara', 'type' => 'group', 'fields' => [
                         ['name' => 'name', 'label' => 'Name', 'type' => 'text', 'required' => true],

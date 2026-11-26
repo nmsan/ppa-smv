@@ -22,6 +22,7 @@ export interface NewsItem {
     title: string;
     image: string | null;
     body: string[];
+    gallery?: { image: string; caption?: string | null }[];
 }
 
 export interface Project {

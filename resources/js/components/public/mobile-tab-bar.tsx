@@ -35,7 +35,7 @@ export default function MobileTabBar() {
                 </Link>
             ))}
             <Link
-                href={auth.user ? '/dashboard' : '/register'}
+                href={auth.user ? '/my-membership' : '/register'}
                 className="bg-gold-500 text-gold-ink flex min-h-[52px] flex-col items-center justify-center gap-0.5 rounded-xl text-xs font-semibold"
             >
                 {auth.user ? <UserRound className="size-[22px]" /> : <Plus className="size-[22px]" />}

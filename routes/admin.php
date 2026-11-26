@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\ApplicantController;
 use App\Http\Controllers\Admin\ContentController;
+use App\Http\Controllers\Admin\MemberController;
 use App\Http\Controllers\Admin\MembershipPaymentController;
 use App\Http\Controllers\Admin\MembershipPlanController;
 use App\Http\Controllers\Admin\SupporterController;
@@ -11,6 +12,9 @@ Route::middleware(['auth', 'role:super-admin|membership-secretary|batch-represen
     ->prefix('admin')
     ->name('admin.')
     ->group(function () {
+        Route::get('members', [MemberController::class, 'index'])->name('members.index');
+        Route::get('members/{member}', [MemberController::class, 'show'])->name('members.show');
+        Route::put('members/{member}', [MemberController::class, 'update'])->name('members.update');
         Route::get('applicants', [ApplicantController::class, 'index'])->name('applicants.index');
         Route::post('applicants/{member}/approve', [ApplicantController::class, 'approve'])->name('applicants.approve');
     });

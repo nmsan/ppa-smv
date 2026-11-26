@@ -13,6 +13,8 @@ import { type CSSProperties, type ReactNode, useMemo, useState } from 'react';
 /** One supporter's total of one kind (sponsorships or donations), from their account. */
 export interface BoardRow {
     name: string;
+    /** Profile photo of the linked member's account, when they have uploaded one. */
+    avatar?: string | null;
     note: string | null;
     total_cents: number;
     events: { name: string; cents: number }[];
@@ -60,7 +62,11 @@ const medals = [
     { label: 'Third', ring: 'ring-amber-700/40', bg: 'from-amber-200 to-amber-600', step: 'h-14 bg-amber-600/70', text: 'text-amber-950' },
 ];
 
-function Monogram({ name, className }: { name: string; className?: string }) {
+function Monogram({ name, avatar, className }: { name: string; avatar?: string | null; className?: string }) {
+    if (avatar) {
+        return <img src={avatar} alt="" loading="lazy" className={cn('shrink-0 rounded-2xl bg-neutral-100 object-cover', className)} />;
+    }
+
     return (
         <span
             aria-hidden
@@ -119,7 +125,11 @@ function Podium({ top }: { top: Ranked[] }) {
                             >
                                 <Award className="size-3.5" aria-hidden /> {label}
                             </span>
-                            <Monogram name={s.name} className={cn('mx-auto mt-2 ring-4', m.ring, i === 0 ? 'size-20 text-2xl' : 'size-16 text-xl')} />
+                            <Monogram
+                                name={s.name}
+                                avatar={s.avatar}
+                                className={cn('mx-auto mt-2 ring-4', m.ring, i === 0 ? 'size-20 text-2xl' : 'size-16 text-xl')}
+                            />
                             <h3 className={cn('text-maroon-950 mt-4 font-bold', i === 0 ? 'text-xl' : 'text-lg')}>{s.name}</h3>
                             {s.note && <p className="text-sm text-neutral-600">{s.note}</p>}
                             <p className="text-maroon-800 mt-1 text-lg font-semibold tabular-nums">{lkr(s.total_cents)}</p>
@@ -198,7 +208,7 @@ function List({ rows, events, labels }: { rows: Ranked[]; events: string[]; labe
                         style={delay(Math.min(i, 10) * 60)}
                     >
                         <span className="text-center text-sm font-semibold text-neutral-400 tabular-nums">{s.rank}</span>
-                        <Monogram name={s.name} className="size-11 text-sm" />
+                        <Monogram name={s.name} avatar={s.avatar} className="size-11 text-sm" />
                         <div className="min-w-0">
                             <p className="font-semibold text-neutral-900">
                                 {s.name}

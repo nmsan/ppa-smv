@@ -3,6 +3,7 @@ import FlashMessage from '@/components/domain/flash-message';
 import FormErrorSummary from '@/components/domain/form-error-summary';
 import HeadingSmall from '@/components/heading-small';
 import InputError from '@/components/input-error';
+import PersonAvatar from '@/components/person-avatar';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
@@ -17,6 +18,7 @@ import { type FormEventHandler, useState } from 'react';
 interface SupporterRow {
     id: string;
     name: string;
+    avatar: string | null;
     kind: string;
     member_number: string | null;
     note: string | null;
@@ -262,21 +264,26 @@ export default function SupportersIndex({ supporters, events }: { supporters: Su
                                 {shown.map((s) => (
                                     <tr key={s.id} className="hover:bg-muted/30 border-t">
                                         <td className="px-4 py-2">
-                                            <Link href={route('admin.supporters.show', s.id)} className="font-medium hover:underline">
-                                                {s.name}
-                                            </Link>
-                                            <div className="text-muted-foreground flex flex-wrap items-center gap-2 text-xs">
-                                                {s.member_number && (
-                                                    <span className="inline-flex items-center gap-1 text-green-700">
-                                                        <BadgeCheck className="size-3" /> {s.member_number}
-                                                    </span>
-                                                )}
-                                                {s.note && <span>{s.note}</span>}
-                                                {!s.show_publicly && (
-                                                    <span className="inline-flex items-center gap-1">
-                                                        <EyeOff className="size-3" /> hidden
-                                                    </span>
-                                                )}
+                                            <div className="flex items-center gap-3">
+                                                <PersonAvatar name={s.name} src={s.avatar} organisation={s.kind !== 'individual'} />
+                                                <div className="min-w-0">
+                                                    <Link href={route('admin.supporters.show', s.id)} className="font-medium hover:underline">
+                                                        {s.name}
+                                                    </Link>
+                                                    <div className="text-muted-foreground flex flex-wrap items-center gap-2 text-xs">
+                                                        {s.member_number && (
+                                                            <span className="inline-flex items-center gap-1 text-green-700">
+                                                                <BadgeCheck className="size-3" /> {s.member_number}
+                                                            </span>
+                                                        )}
+                                                        {s.note && <span>{s.note}</span>}
+                                                        {!s.show_publicly && (
+                                                            <span className="inline-flex items-center gap-1">
+                                                                <EyeOff className="size-3" /> hidden
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                </div>
                                             </div>
                                         </td>
                                         <td className="px-4 py-2">

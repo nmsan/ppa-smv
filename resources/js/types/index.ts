@@ -3,6 +3,8 @@ import { LucideIcon } from 'lucide-react';
 export interface Auth {
     user: User;
     roles: string[];
+    /** Whether this person works in the admin portal. Members and applicants use My account instead. */
+    adminPortal: boolean;
 }
 
 export interface BreadcrumbItem {
@@ -34,7 +36,7 @@ export interface User {
     id: number;
     name: string;
     email: string;
-    avatar?: string;
+    avatar?: string | null;
     email_verified_at: string | null;
     created_at: string;
     updated_at: string;
