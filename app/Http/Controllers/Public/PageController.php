@@ -6,6 +6,7 @@ use App\Application\Membership\UseCases\ListMembershipPlans;
 use App\Application\Ports\DashboardQueries;
 use App\Application\Ports\SupporterReadModel;
 use App\Http\Controllers\Controller;
+use App\Support\ShareMeta;
 use App\Support\SiteContent;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -84,12 +85,15 @@ class PageController extends Controller
         $projects = SiteContent::get('projects')['items'];
         $current = collect($projects)->firstWhere('slug', $project) ?? abort(404);
 
+        $meta = ShareMeta::make($current['title'], [$current['summary'] ?? null, ...($current['body'] ?? []), "A school project by the Senanayake Central College Past Pupils' Association, Madampe. Support it through the association's official bank account."], $current['image'] ?? null);
+
         return Inertia::render('public/projects/show', [
             'editLink' => ['href' => "/admin/content/projects/{$project}/edit", 'roles' => ['super-admin', 'content-editor'], 'label' => 'Edit this project'],
             'project' => $current,
             'others' => array_values(array_filter($projects, fn ($p) => $p['slug'] !== $project)),
             'bank' => SiteContent::get('site')['bank'],
-        ]);
+            'share' => $meta,
+        ])->withViewData(['meta' => $meta]);
     }
 
     public function sponsors(SupporterReadModel $board): Response
@@ -122,11 +126,16 @@ class PageController extends Controller
         $items = SiteContent::get('news')['items'];
         $current = collect($items)->firstWhere('slug', $item) ?? abort(404);
 
+        // Posts without their own photo fall back to the first gallery photo, then the crest.
+        $image = $current['image'] ?? ($current['gallery'][0]['image'] ?? null);
+        $meta = ShareMeta::make($current['title'], $current['body'] ?? [], $image, 'article', $current['type'] === 'event' ? null : ($current['date'] ?? null));
+
         return Inertia::render('public/news/show', [
             'editLink' => ['href' => "/admin/content/news/{$item}/edit", 'roles' => ['super-admin', 'content-editor'], 'label' => 'Edit this post'],
             'item' => $current,
             'others' => array_slice(array_values(array_filter($items, fn ($n) => $n['slug'] !== $item)), 0, 4),
-        ]);
+            'share' => $meta,
+        ])->withViewData(['meta' => $meta]);
     }
 
     public function contact(): Response

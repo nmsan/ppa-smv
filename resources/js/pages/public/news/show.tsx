@@ -1,10 +1,11 @@
 import PageHeader from '@/components/public/page-header';
 import { formatDate, newsTypeLabel, Section } from '@/components/public/section';
+import ShareButtons, { type ShareMeta } from '@/components/public/share-buttons';
 import PublicLayout from '@/layouts/public-layout';
 import { type NewsItem } from '@/types/public';
 import { Link } from '@inertiajs/react';
 
-export default function NewsShow({ item, others }: { item: NewsItem; others: NewsItem[] }) {
+export default function NewsShow({ item, others, share }: { item: NewsItem; others: NewsItem[]; share: ShareMeta }) {
     const gallery = item.gallery ?? [];
 
     return (
@@ -34,6 +35,7 @@ export default function NewsShow({ item, others }: { item: NewsItem; others: New
                                     Contact the committee for details →
                                 </Link>
                             )}
+                            <ShareButtons share={share} className="mt-8 border-t border-neutral-100 pt-6" />
                         </div>
                     </article>
 

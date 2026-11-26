@@ -1,6 +1,7 @@
 import BankDetailsCard from '@/components/public/bank-details';
 import PageHeader from '@/components/public/page-header';
 import { Section } from '@/components/public/section';
+import ShareButtons, { type ShareMeta } from '@/components/public/share-buttons';
 import PublicLayout from '@/layouts/public-layout';
 import { type BankDetails, type Project } from '@/types/public';
 import { Link } from '@inertiajs/react';
@@ -11,7 +12,7 @@ const projectStatus: Record<NonNullable<Project['status']>, string> = {
     completed: 'Completed',
 };
 
-export default function ProjectShow({ project, others, bank }: { project: Project; others: Project[]; bank: BankDetails }) {
+export default function ProjectShow({ project, others, bank, share }: { project: Project; others: Project[]; bank: BankDetails; share: ShareMeta }) {
     const body = project.body ?? [];
     const gallery = project.gallery ?? [];
 
@@ -56,6 +57,7 @@ export default function ProjectShow({ project, others, bank }: { project: Projec
                                     </p>
                                 )
                             )}
+                            <ShareButtons share={share} className="mt-4 border-t border-neutral-100 pt-6" />
                         </div>
                     </article>
 
