@@ -8,6 +8,12 @@ export interface FieldDef {
     options?: Record<string, string>;
     fields?: FieldDef[];
     item_label?: string;
+    /** Repeaters: badge for the last item (e.g. "Present principal"); it opens by default. */
+    highlight_last?: string;
+    /** Repeaters: show the last item first in the editor (stored order is unchanged); "Add" goes on top. */
+    newest_first?: boolean;
+    /** Repeaters: title each item with this field's value ("Principal No. 29") instead of its position. */
+    number_field?: string;
 }
 
 export interface ContentTypeDef {

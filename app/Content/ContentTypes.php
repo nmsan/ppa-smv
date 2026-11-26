@@ -153,12 +153,15 @@ final class ContentTypes
                         ['name' => 'text', 'label' => 'Message', 'type' => 'textarea', 'required' => true],
                         ['name' => 'name', 'label' => 'Name', 'type' => 'text', 'required' => true],
                         ['name' => 'role', 'label' => 'Role', 'type' => 'text', 'required' => true],
+                        ['name' => 'image', 'label' => 'Photo (portrait, square or 4:5; initials are shown without one)', 'type' => 'image'],
                     ]],
-                    ['name' => 'principals', 'label' => 'Principals in order', 'type' => 'repeater', 'item_label' => 'Principal', 'fields' => [
+                    ['name' => 'principals', 'label' => 'Principals, newest first (the top one is shown as the present principal)', 'type' => 'repeater', 'item_label' => 'Principal', 'highlight_last' => 'Present principal', 'newest_first' => true, 'number_field' => 'number', 'fields' => [
                         ['name' => 'number', 'label' => 'Number (blank for a period with no principal)', 'type' => 'number'],
                         ['name' => 'from', 'label' => 'From (YYYY-MM-DD, or a period such as 1987-1989)', 'type' => 'text'],
                         ['name' => 'name', 'label' => 'Name', 'type' => 'text'],
+                        ['name' => 'gender', 'label' => 'Gender (picks the placeholder avatar when there is no photo; if not set, it is guessed from the title in the name)', 'type' => 'select', 'options' => ['male' => 'Male', 'female' => 'Female']],
                         ['name' => 'note', 'label' => 'Note', 'type' => 'text'],
+                        ['name' => 'image', 'label' => 'Photo (portrait, square or 4:5)', 'type' => 'image'],
                     ]],
                 ],
             ],

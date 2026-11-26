@@ -17,7 +17,7 @@ interface HomeContent {
 
 interface Props {
     home: HomeContent;
-    message: { text: string; name: string; role: string };
+    message: { text: string; name: string; role: string; image?: string | null };
     /** Upcoming events, soonest first. */
     events: NewsItem[];
     /** News and notices, newest first (at most 3). */

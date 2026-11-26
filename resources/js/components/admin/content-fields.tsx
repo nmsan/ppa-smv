@@ -229,20 +229,59 @@ function summary(field: FieldDef, item: Data): string {
 
 function RepeaterField({ field, path, ctx }: { field: FieldDef; path: Path; ctx: Ctx }) {
     const items = (ctx.get(path) as Data[] | null) ?? [];
-    const [open, setOpen] = useState<Record<number, boolean>>(() => (items.length <= 3 ? Object.fromEntries(items.map((_, i) => [i, true])) : {}));
+    const lastIndex = items.length - 1;
+    const highlight = field.highlight_last && lastIndex >= 0 ? field.highlight_last : null;
+    const [open, setOpen] = useState<Record<number, boolean>>(() =>
+        items.length <= 3 ? Object.fromEntries(items.map((_, i) => [i, true])) : highlight ? { [lastIndex]: true } : {},
+    );
     const itemLabel = field.item_label ?? 'Item';
+    // "Principal No. 29" from the item's own number field; an item without one (e.g. a gap period) says "No number".
+    const itemTitle = (item: Data, i: number) => {
+        if (!field.number_field) return `${itemLabel} ${i + 1}`;
+        const n = item?.[field.number_field];
+        return n === null || n === undefined || n === '' ? 'No number' : `${itemLabel} No. ${n}`;
+    };
     const set = (next: Data[]) => ctx.set(path, next);
+    // Stored order never changes; newest_first only flips what the editor shows (and where "Add" sits).
+    const reversed = field.newest_first === true;
+    const order = items.map((_, i) => (reversed ? lastIndex - i : i));
+    const toStorage = (shown: number) => (reversed ? lastIndex - shown : shown);
+
+    const addButton = (
+        <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="justify-self-start"
+            onClick={() => {
+                set([...items, blankFor({ ...field, type: 'group' }) as Data]);
+                setOpen({ ...open, [items.length]: true });
+            }}
+        >
+            <Plus className="size-4" /> Add {itemLabel.toLowerCase()}
+        </Button>
+    );
 
     return (
         <fieldset className="grid min-w-0 grid-cols-[minmax(0,1fr)] gap-3">
             <legend className="mb-2 text-sm font-semibold">
                 {field.label} <span className="text-muted-foreground font-normal">({items.length})</span>
             </legend>
-            {items.map((item, i) => {
+            {reversed && addButton}
+            {order.map((i, shown) => {
+                const item = items[i];
                 const isOpen = open[i] ?? false;
                 const errors = ctx.errorsUnder([...path, i]);
+                const highlighted = highlight !== null && i === lastIndex;
                 return (
-                    <div key={i} className={cn('min-w-0 rounded-lg border bg-white dark:bg-neutral-900', errors > 0 && 'border-destructive')}>
+                    <div
+                        key={i}
+                        className={cn(
+                            'min-w-0 rounded-lg border bg-white dark:bg-neutral-900',
+                            highlighted && 'border-primary ring-primary/20 ring-2',
+                            errors > 0 && 'border-destructive',
+                        )}
+                    >
                         <div className="flex items-center gap-2 px-3 py-2">
                             <button
                                 type="button"
@@ -251,16 +290,20 @@ function RepeaterField({ field, path, ctx }: { field: FieldDef; path: Path; ctx:
                                 aria-expanded={isOpen}
                             >
                                 {isOpen ? <ChevronDown className="size-4 shrink-0" /> : <ChevronRight className="size-4 shrink-0" />}
-                                <span className="shrink-0 font-medium whitespace-nowrap">
-                                    {itemLabel} {i + 1}
-                                </span>
+                                <span className="shrink-0 font-medium whitespace-nowrap">{itemTitle(item, i)}</span>
+                                {highlighted && (
+                                    <span className="bg-primary text-primary-foreground shrink-0 rounded-full px-2 py-0.5 text-xs font-medium">
+                                        {highlight}
+                                    </span>
+                                )}
                                 <span className="text-muted-foreground truncate">{summary(field, item)}</span>
                                 {errors > 0 && <span className="text-destructive shrink-0 text-xs">{errors} to fix</span>}
                             </button>
                             <ItemControls
-                                index={i}
+                                index={shown}
                                 count={items.length}
-                                onMove={(to) => {
+                                onMove={(toShown) => {
+                                    const to = toStorage(toShown);
                                     set(move(items, i, to));
                                     setOpen({ ...open, [i]: open[to] ?? false, [to]: isOpen });
                                 }}
@@ -281,18 +324,7 @@ function RepeaterField({ field, path, ctx }: { field: FieldDef; path: Path; ctx:
                 );
             })}
             <InputError message={ctx.error(path)} />
-            <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                className="justify-self-start"
-                onClick={() => {
-                    set([...items, blankFor({ ...field, type: 'group' }) as Data]);
-                    setOpen({ ...open, [items.length]: true });
-                }}
-            >
-                <Plus className="size-4" /> Add {itemLabel.toLowerCase()}
-            </Button>
+            {!reversed && addButton}
         </fieldset>
     );
 }
@@ -333,8 +365,9 @@ export function Field({ field, path, ctx }: { field: FieldDef; path: Path; ctx: 
                         className="border-input h-9 rounded-md border bg-transparent px-3 text-sm shadow-xs"
                         value={(value as string) ?? ''}
                         disabled={ctx.disabled}
-                        onChange={(e) => ctx.set(path, e.target.value)}
+                        onChange={(e) => ctx.set(path, e.target.value === '' ? null : e.target.value)}
                     >
+                        {!field.required && <option value="">Not set</option>}
                         {Object.entries(field.options ?? {}).map(([k, label]) => (
                             <option key={k} value={k}>
                                 {label}

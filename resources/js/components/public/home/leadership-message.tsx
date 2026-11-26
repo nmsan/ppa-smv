@@ -4,7 +4,7 @@ import { Link } from '@inertiajs/react';
 import { ArrowRight } from 'lucide-react';
 
 interface Props {
-    message: { text: string; name: string; role: string };
+    message: { text: string; name: string; role: string; image?: string | null };
 }
 
 /** "මොරිස් අත්තනායක" → "මො.අ.": the first written character (grapheme) of each word. */
@@ -37,15 +37,19 @@ export default function LeadershipMessage({ message }: Props) {
 
     return (
         <section className="mx-auto grid max-w-7xl items-center gap-10 px-4 py-20 sm:px-6 md:grid-cols-[0.75fr_1.25fr] md:gap-[72px] md:py-24">
-            {/* No portrait is on file yet, so the author's initials stand in. Swap for a photo when the committee supplies one. */}
+            {/* The author's photo when one is uploaded in the editor; their initials stand in until then. */}
             <div
-                aria-hidden
+                aria-hidden={!message.image}
                 className="relative mx-auto grid aspect-square w-full max-w-[360px] place-items-center overflow-hidden rounded-[28px] bg-[radial-gradient(120%_90%_at_30%_20%,var(--color-maroon-600),var(--color-maroon-900))] shadow-[var(--shadow-lift)] md:aspect-[4/5] md:max-w-none"
             >
+                {message.image ? (
+                    <img src={message.image} alt={message.name} loading="lazy" className="absolute inset-0 h-full w-full object-cover object-top" />
+                ) : (
+                    <span {...langOf(message.name)} className="text-gold-400 text-[clamp(72px,9vw,120px)] leading-none font-bold">
+                        {initials(message.name)}
+                    </span>
+                )}
                 <span className="border-gold-400/35 pointer-events-none absolute inset-3.5 rounded-[20px] border" />
-                <span {...langOf(message.name)} className="text-gold-400 text-[clamp(72px,9vw,120px)] leading-none font-bold">
-                    {initials(message.name)}
-                </span>
                 <img src="/images/brand/logo.png" alt="" className="absolute bottom-[22px] left-[22px] size-[54px] rounded-full" />
             </div>
 
