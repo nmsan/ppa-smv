@@ -22,20 +22,30 @@ export default function ForgotPassword({ status }: { status?: string }) {
     };
 
     return (
-        <AuthLayout title="Forgot password" description="Enter your email to receive a password reset link">
+        <AuthLayout title="Reset your password" description="Enter the email you signed up with and we'll send you a link to choose a new password.">
             <Head title="Forgot password" />
 
-            {status && <div className="mb-4 text-center text-sm font-medium text-green-600">{status}</div>}
+            {status && (
+                <div
+                    role="status"
+                    className="mb-6 rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-center text-sm font-medium text-green-800"
+                >
+                    {status}
+                </div>
+            )}
 
             <div className="space-y-6">
                 <form onSubmit={submit}>
                     <div className="grid gap-2">
-                        <Label htmlFor="email">Email address</Label>
+                        <Label htmlFor="email" className="text-[15px] font-semibold">
+                            Email address
+                        </Label>
                         <Input
+                            className="focus-visible:ring-maroon-700 h-12 rounded-xl border-neutral-300 bg-white px-4 text-base"
                             id="email"
                             type="email"
                             name="email"
-                            autoComplete="off"
+                            autoComplete="email"
                             value={data.email}
                             autoFocus
                             onChange={(e) => setData('email', e.target.value)}
@@ -45,17 +55,19 @@ export default function ForgotPassword({ status }: { status?: string }) {
                         <InputError message={errors.email} />
                     </div>
 
-                    <div className="my-6 flex items-center justify-start">
-                        <Button className="w-full" disabled={processing}>
+                    <div className="mt-6">
+                        <Button type="submit" variant="maroon" size="brand" className="w-full" disabled={processing}>
                             {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
                             Email password reset link
                         </Button>
                     </div>
                 </form>
 
-                <div className="text-muted-foreground space-x-1 text-center text-sm">
+                <div className="space-x-1 text-center text-[15px] text-neutral-600">
                     <span>Or, return to</span>
-                    <TextLink href={route('login')}>log in</TextLink>
+                    <TextLink href={route('login')} className="text-maroon-700 decoration-maroon-700/30 font-semibold">
+                        log in
+                    </TextLink>
                 </div>
             </div>
         </AuthLayout>

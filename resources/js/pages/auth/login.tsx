@@ -36,14 +36,17 @@ export default function Login({ status, canResetPassword }: LoginProps) {
     };
 
     return (
-        <AuthLayout title="Log in to your account" description="Enter your email and password below to log in">
+        <AuthLayout title="Welcome back" description="Log in to your member account.">
             <Head title="Log in" />
 
             <form className="flex flex-col gap-6" onSubmit={submit}>
                 <div className="grid gap-6">
                     <div className="grid gap-2">
-                        <Label htmlFor="email">Email address</Label>
+                        <Label htmlFor="email" className="text-[15px] font-semibold">
+                            Email address
+                        </Label>
                         <Input
+                            className="focus-visible:ring-maroon-700 h-12 rounded-xl border-neutral-300 bg-white px-4 text-base"
                             id="email"
                             type="email"
                             required
@@ -59,14 +62,17 @@ export default function Login({ status, canResetPassword }: LoginProps) {
 
                     <div className="grid gap-2">
                         <div className="flex items-center">
-                            <Label htmlFor="password">Password</Label>
+                            <Label htmlFor="password" className="text-[15px] font-semibold">
+                                Password
+                            </Label>
                             {canResetPassword && (
-                                <TextLink href={route('password.request')} className="ml-auto text-sm" tabIndex={5}>
+                                <TextLink href={route('password.request')} className="text-maroon-700 ml-auto text-sm" tabIndex={5}>
                                     Forgot password?
                                 </TextLink>
                             )}
                         </div>
                         <Input
+                            className="focus-visible:ring-maroon-700 h-12 rounded-xl border-neutral-300 bg-white px-4 text-base"
                             id="password"
                             type="password"
                             required
@@ -80,19 +86,26 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                     </div>
 
                     <div className="flex items-center space-x-3">
-                        <Checkbox id="remember" name="remember" tabIndex={3} />
+                        <Checkbox
+                            id="remember"
+                            name="remember"
+                            tabIndex={3}
+                            checked={data.remember}
+                            onCheckedChange={(v) => setData('remember', v === true)}
+                            className="data-[state=checked]:bg-maroon-800 data-[state=checked]:border-maroon-800"
+                        />
                         <Label htmlFor="remember">Remember me</Label>
                     </div>
 
-                    <Button type="submit" className="mt-4 w-full" tabIndex={4} disabled={processing}>
+                    <Button type="submit" variant="maroon" size="brand" className="mt-2 w-full" tabIndex={4} disabled={processing}>
                         {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
                         Log in
                     </Button>
                 </div>
 
-                <div className="text-muted-foreground text-center text-sm">
+                <div className="text-center text-[15px] text-neutral-600">
                     Don't have an account?{' '}
-                    <TextLink href={route('register')} tabIndex={5}>
+                    <TextLink href={route('register')} className="text-maroon-700 decoration-maroon-700/30 font-semibold" tabIndex={5}>
                         Sign up
                     </TextLink>
                 </div>
