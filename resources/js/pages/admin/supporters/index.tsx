@@ -1,3 +1,4 @@
+import SectionLabel from '@/components/admin/section-label';
 import StatTile from '@/components/dashboard/stat-tile';
 import FlashMessage from '@/components/domain/flash-message';
 import FormErrorSummary from '@/components/domain/form-error-summary';
@@ -239,7 +240,7 @@ export default function SupportersIndex({ supporters, events }: { supporters: Su
 
                 <section className="space-y-3">
                     <div className="flex flex-wrap items-center justify-between gap-3">
-                        <h2 className="text-sm font-semibold tracking-wide text-neutral-500 uppercase">Supporters, largest first</h2>
+                        <SectionLabel>Supporters, largest first</SectionLabel>
                         <div role="tablist" className="flex gap-2">
                             {(['all', 'sponsors', 'donors'] as Tab[]).map((t) => (
                                 <button key={t} role="tab" aria-selected={tab === t} className={tabClass(t)} onClick={() => setTab(t)}>
@@ -248,7 +249,7 @@ export default function SupportersIndex({ supporters, events }: { supporters: Su
                             ))}
                         </div>
                     </div>
-                    <div className="overflow-x-auto rounded-lg border">
+                    <div className="admin-panel overflow-x-auto rounded-lg border">
                         <table className="w-full text-sm">
                             <thead className="bg-muted/50 text-left">
                                 <tr>
@@ -305,8 +306,8 @@ export default function SupportersIndex({ supporters, events }: { supporters: Su
                 </section>
 
                 <section className="space-y-3">
-                    <h2 className="text-sm font-semibold tracking-wide text-neutral-500 uppercase">By event or project</h2>
-                    <div className="overflow-x-auto rounded-lg border">
+                    <SectionLabel>By event or project</SectionLabel>
+                    <div className="admin-panel overflow-x-auto rounded-lg border">
                         <table className="w-full text-sm">
                             <thead className="bg-muted/50 text-left">
                                 <tr>

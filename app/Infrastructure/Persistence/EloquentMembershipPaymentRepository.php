@@ -37,7 +37,7 @@ final class EloquentMembershipPaymentRepository implements MembershipPaymentRepo
 
         return MemberModel::query()
             ->where('status', MembershipStatus::Approved->value)
-            ->when($search === '', fn ($q) => $q->where('source', 'application'))
+            ->when($search === '', fn ($q) => $q->whereIn('source', ['application', 'secretary']))
             ->when($search !== '', fn ($q) => $q->where(fn ($w) => $w
                 ->where('full_name', 'like', "%{$search}%")
                 ->orWhere('membership_number', 'like', "%{$search}%")))

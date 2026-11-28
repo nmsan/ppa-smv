@@ -59,7 +59,7 @@ export default function ContentList({ type, entries }: { type: ContentTypeDef; e
                 </div>
                 <FlashMessage />
                 <p className="text-muted-foreground text-sm">The website shows these in this order. Use the arrows to reorder.</p>
-                <div className="overflow-x-auto rounded-lg border">
+                <div className="admin-panel overflow-x-auto rounded-lg border">
                     <table className="w-full text-sm">
                         <thead className="bg-muted/50 text-left">
                             <tr>

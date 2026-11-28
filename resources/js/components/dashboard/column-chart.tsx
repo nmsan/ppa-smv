@@ -33,7 +33,7 @@ export default function ColumnChart({ title, data, valueLabel, labelEvery = 1, h
     const y = (v: number) => pad.top + plotH - (v / top) * plotH;
 
     return (
-        <figure className="rounded-xl border p-5">
+        <figure className="admin-panel rounded-xl border p-5">
             <div className="flex items-start justify-between gap-4">
                 <figcaption className="font-semibold">{title}</figcaption>
                 {total > 0 && (

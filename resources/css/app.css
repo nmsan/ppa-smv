@@ -24,6 +24,8 @@
     --color-gold-300: #f0d27a;
     --color-gold-400: #e5b94c;
     --color-gold-500: #d4a843;
+    /* focus rings on white: gold-500 is 2.2:1, this is 3.8:1 */
+    --color-gold-600: #a87b1a;
     /* text on gold fills, and gold-toned text on gold-100 (5.8:1) */
     --color-gold-ink: #3a2a05;
     --color-gold-text: #7a5a10;
@@ -38,6 +40,8 @@
     --radius-sm: calc(var(--radius) - 4px);
 
     --color-background: var(--background);
+    /* Admin portal page behind the cards, so white cards read as separate sections */
+    --color-canvas: var(--canvas);
     --color-foreground: var(--foreground);
 
     --color-card: var(--card);
@@ -104,77 +108,83 @@
     --viz-bar: #a3304b;
     --viz-bar-muted: #e6c4cc;
     --viz-grid: #e7e5e4;
+    /* Admin portal: Heritage Maroon for actions, Ceremonial Gold for focus and the active nav item */
     --background: hsl(0, 0%, 100%);
+    --canvas: #f7f5f4;
     --foreground: hsl(0, 0%, 3.9%);
     --card: hsl(0, 0%, 100%);
     --card-foreground: hsl(0, 0%, 3.9%);
     --popover: hsl(0, 0%, 100%);
     --popover-foreground: hsl(0, 0%, 3.9%);
-    --primary: hsl(0, 0%, 9%);
-    --primary-foreground: hsl(0, 0%, 98%);
+    --primary: var(--color-maroon-800);
+    --primary-foreground: hsl(0, 0%, 100%);
     --secondary: hsl(0, 0%, 96.1%);
     --secondary-foreground: hsl(0, 0%, 9%);
     --muted: hsl(0, 0%, 96.1%);
-    --muted-foreground: hsl(0, 0%, 45.1%);
-    --accent: hsl(0, 0%, 96.1%);
-    --accent-foreground: hsl(0, 0%, 9%);
-    --destructive: hsl(0, 84.2%, 60.2%);
+    --muted-foreground: hsl(0, 0%, 40%);
+    --accent: var(--color-maroon-50);
+    --accent-foreground: var(--color-maroon-800);
+    --destructive: hsl(0, 72%, 45%);
     --destructive-foreground: hsl(0, 0%, 98%);
-    --border: hsl(0, 0%, 92.8%);
-    --input: hsl(0, 0%, 89.8%);
-    --ring: hsl(0, 0%, 3.9%);
+    --border: #e0dcdc;
+    --input: hsl(0, 0%, 80%);
+    --ring: var(--color-gold-600);
     --chart-1: hsl(12, 76%, 61%);
     --chart-2: hsl(173, 58%, 39%);
     --chart-3: hsl(197, 37%, 24%);
     --chart-4: hsl(43, 74%, 66%);
     --chart-5: hsl(27, 87%, 67%);
     --radius: 0.5rem;
-    --sidebar-background: hsl(0, 0%, 98%);
-    --sidebar-foreground: hsl(240, 5.3%, 30%);
-    --sidebar-primary: hsl(0, 0%, 10%);
-    --sidebar-primary-foreground: hsl(0, 0%, 98%);
-    --sidebar-accent: hsl(0, 0%, 94%);
-    --sidebar-accent-foreground: hsl(0, 0%, 30%);
-    --sidebar-border: hsl(0, 0%, 91%);
-    --sidebar-ring: hsl(217.2, 91.2%, 59.8%);
+    /* The sidebar is a maroon frame around the content panel, like the public site's footer */
+    --sidebar-background: var(--color-maroon-900);
+    --sidebar-foreground: #f3e7e9;
+    --sidebar-primary: var(--color-gold-500);
+    --sidebar-primary-foreground: var(--color-gold-ink);
+    --sidebar-accent: var(--color-maroon-700);
+    --sidebar-accent-foreground: hsl(0, 0%, 100%);
+    --sidebar-border: var(--color-maroon-700);
+    --sidebar-ring: var(--color-gold-400);
 }
 
 .dark {
     --viz-bar: #d86a82;
     --viz-bar-muted: #4a2a31;
     --viz-grid: #2e2e2c;
-    --background: hsl(0, 0%, 3.9%);
+    --background: hsl(350, 12%, 5%);
+    --canvas: hsl(350, 12%, 4%);
     --foreground: hsl(0, 0%, 98%);
-    --card: hsl(0, 0%, 3.9%);
+    /* a step lighter than the canvas: dark cards are set apart by fill, not shadow */
+    --card: hsl(350, 10%, 9%);
     --card-foreground: hsl(0, 0%, 98%);
-    --popover: hsl(0, 0%, 3.9%);
+    --popover: hsl(350, 14%, 7%);
     --popover-foreground: hsl(0, 0%, 98%);
-    --primary: hsl(0, 0%, 98%);
-    --primary-foreground: hsl(0, 0%, 9%);
-    --secondary: hsl(0, 0%, 14.9%);
+    /* Gold actions on dark, as on the public site's maroon bands */
+    --primary: var(--color-gold-400);
+    --primary-foreground: var(--color-gold-ink);
+    --secondary: hsl(350, 10%, 14%);
     --secondary-foreground: hsl(0, 0%, 98%);
-    --muted: hsl(0, 0%, 6.9%);
-    --muted-foreground: hsl(0, 0%, 63.9%);
-    --accent: hsl(0, 0%, 14.9%);
+    --muted: hsl(350, 10%, 9%);
+    --muted-foreground: hsl(0, 0%, 66%);
+    --accent: #2b1519;
     --accent-foreground: hsl(0, 0%, 98%);
     --destructive: hsl(0, 84%, 60%);
     --destructive-foreground: hsl(0, 0%, 98%);
-    --border: hsl(0, 0%, 14.9%);
-    --input: hsl(0, 0%, 14.9%);
-    --ring: hsl(0, 0%, 83.1%);
+    --border: hsl(350, 9%, 20%);
+    --input: hsl(350, 9%, 24%);
+    --ring: var(--color-gold-400);
     --chart-1: hsl(220, 70%, 50%);
     --chart-2: hsl(160, 60%, 45%);
     --chart-3: hsl(30, 80%, 55%);
     --chart-4: hsl(280, 65%, 60%);
     --chart-5: hsl(340, 75%, 55%);
-    --sidebar-background: hsl(0, 0%, 7%);
-    --sidebar-foreground: hsl(0, 0%, 80%);
-    --sidebar-primary: hsl(360, 100%, 100%);
-    --sidebar-primary-foreground: hsl(0, 0%, 100%);
-    --sidebar-accent: hsl(0, 0%, 15.9%);
-    --sidebar-accent-foreground: hsl(240, 4.8%, 95.9%);
-    --sidebar-border: hsl(0, 0%, 15.9%);
-    --sidebar-ring: hsl(217.2, 91.2%, 59.8%);
+    --sidebar-background: var(--color-maroon-950);
+    --sidebar-foreground: #f3e7e9;
+    --sidebar-primary: var(--color-gold-400);
+    --sidebar-primary-foreground: var(--color-gold-ink);
+    --sidebar-accent: var(--color-maroon-800);
+    --sidebar-accent-foreground: hsl(0, 0%, 100%);
+    --sidebar-border: var(--color-maroon-900);
+    --sidebar-ring: var(--color-gold-400);
 }
 
 /*
@@ -239,6 +249,14 @@
         font-family: var(--font-sinhala);
         letter-spacing: 0;
         line-height: 1.8;
+    }
+}
+
+/* ---------- Admin portal cards: white on the canvas, with the public site's soft card shadow ---------- */
+@layer components {
+    .admin-panel {
+        background-color: var(--color-card);
+        box-shadow: var(--shadow-card);
     }
 }
 

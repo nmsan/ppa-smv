@@ -3,12 +3,14 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Application\Membership\DTO\MemberListQuery;
+use App\Application\Membership\UseCases\AddMember;
 use App\Application\Membership\UseCases\EditMember;
 use App\Application\Membership\UseCases\ListMembers;
 use App\Application\Ports\ActorResolver;
 use App\Domain\Membership\MembershipCategory;
 use App\Domain\Membership\MembershipStatus;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\AddMemberRequest;
 use App\Http\Requests\Admin\EditMemberRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -17,7 +19,7 @@ use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
 
-/** The member list with search, filters and server-side pagination, and the secretary's edit form. */
+/** The member list with search, filters and server-side pagination, and the secretary's add and edit forms. */
 class MemberController extends Controller
 {
     public function __construct(private readonly ActorResolver $actors) {}
@@ -29,7 +31,7 @@ class MemberController extends Controller
             'status' => ['nullable', Rule::enum(MembershipStatus::class)],
             'category' => ['nullable', Rule::enum(MembershipCategory::class)],
             'batch' => ['nullable', 'integer', 'between:1940,2100'],
-            'source' => ['nullable', 'in:application,register'],
+            'source' => ['nullable', 'in:application,register,secretary'],
             'country' => ['nullable', 'string', 'max:100'],
             'sort' => ['nullable', Rule::in(MemberListQuery::SORTS)],
             'direction' => ['nullable', 'in:asc,desc'],
@@ -70,6 +72,15 @@ class MemberController extends Controller
             'statuses' => array_map(fn (MembershipStatus $s) => $s->value, MembershipStatus::cases()),
             'categories' => array_map(fn (MembershipCategory $c) => $c->value, MembershipCategory::cases()),
         ]);
+    }
+
+    public function store(AddMemberRequest $request, AddMember $add): RedirectResponse
+    {
+        $member = $add->execute($request->toData(), $request->boolean('give_number'), $this->actors->forUser($request->user()->id));
+
+        return back()->with('success', $member->membershipNumber()
+            ? "{$member->fullName} is added as {$member->membershipNumber()}. The treasurer can now record their fee."
+            : "{$member->fullName} is added and is waiting under Applicants for approval.");
     }
 
     /** The current details for the edit form, fetched when it opens. */

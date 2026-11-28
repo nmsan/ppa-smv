@@ -42,30 +42,31 @@ function Field({ id, label, error, hint, children }: { id: string; label: string
     );
 }
 
-function EditForm({ member, categories, onClose }: { member: EditableMember; categories: string[]; onClose: () => void }) {
+/** The secretary's member form. Without a member it adds a new one; with one it corrects that record. */
+function MemberForm({ member, categories, onClose }: { member?: EditableMember; categories: string[]; onClose: () => void }) {
+    const adding = member === undefined;
     const form = useForm({
-        full_name: member.full_name,
-        email: member.email ?? '',
-        phone: member.phone ?? '',
-        whatsapp: member.whatsapp ?? '',
+        full_name: member?.full_name ?? '',
+        email: member?.email ?? '',
+        phone: member?.phone ?? '',
+        whatsapp: member?.whatsapp ?? '',
         nic: '',
         clear_nic: false as boolean,
-        ol_year: member.ol_year ? String(member.ol_year) : '',
-        al_year: member.al_year ? String(member.al_year) : '',
-        country: member.country ?? '',
-        gender: member.gender ?? '',
-        admission_number: member.admission_number ?? '',
-        category: member.category,
+        ol_year: member?.ol_year ? String(member.ol_year) : '',
+        al_year: member?.al_year ? String(member.al_year) : '',
+        country: member?.country ?? (adding ? 'Sri Lanka' : ''),
+        gender: member?.gender ?? '',
+        admission_number: member?.admission_number ?? '',
+        category: member?.category ?? (categories.includes('annual') ? 'annual' : categories[0]),
+        give_number: true as boolean,
     });
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
-        form.put(route('admin.members.update', member.id), {
-            preserveScroll: true,
-            preserveState: true,
-            onSuccess: onClose,
-            onError: focusFirstError,
-        });
+        const options = { preserveScroll: true, preserveState: true, onSuccess: onClose, onError: focusFirstError };
+        // Each endpoint ignores the other's field (give_number on edit, clear_nic on add).
+        if (member) form.put(route('admin.members.update', member.id), options);
+        else form.post(route('admin.members.store'), options);
     };
 
     const set = (key: keyof typeof form.data) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
@@ -74,14 +75,20 @@ function EditForm({ member, categories, onClose }: { member: EditableMember; cat
     return (
         <form onSubmit={submit} className="space-y-4" noValidate>
             <DialogHeader>
-                <DialogTitle>Edit member</DialogTitle>
+                <DialogTitle>{member ? 'Edit member' : 'Add member'}</DialogTitle>
                 <DialogDescription>
-                    {member.number ?? 'No membership number'}
-                    {member.linked_account ? ' · linked to a website account' : ' · not linked to an account yet'}. Changes are recorded in the
-                    activity log.
+                    {member ? (
+                        <>
+                            {member.number ?? 'No membership number'}
+                            {member.linked_account ? ' · linked to a website account' : ' · not linked to an account yet'}. Changes are recorded in
+                            the activity log.
+                        </>
+                    ) : (
+                        'For someone who joined in person. Only the name and a batch year are required. They can link this record to a website account later with "Find my record".'
+                    )}
                 </DialogDescription>
             </DialogHeader>
-            <FormErrorSummary errors={form.errors} action="saved" />
+            <FormErrorSummary errors={form.errors} action={member ? 'saved' : 'added'} />
 
             <Field id="e-full_name" label="Full name" error={form.errors.full_name}>
                 <Input id="e-full_name" value={form.data.full_name} onChange={set('full_name')} autoFocus />
@@ -120,7 +127,13 @@ function EditForm({ member, categories, onClose }: { member: EditableMember; cat
                     id="e-category"
                     label="Membership"
                     error={form.errors.category}
-                    hint={form.data.category !== member.category ? "The agreed fee changes to the new plan's current fee." : undefined}
+                    hint={
+                        adding
+                            ? "The member owes this plan's current fee."
+                            : form.data.category !== member.category
+                              ? "The agreed fee changes to the new plan's current fee."
+                              : undefined
+                    }
                 >
                     <select id="e-category" className={selectClass} value={form.data.category} onChange={set('category')}>
                         {categories.map((c) => (
@@ -132,15 +145,21 @@ function EditForm({ member, categories, onClose }: { member: EditableMember; cat
                 </Field>
                 <Field
                     id="e-nic"
-                    label={member.has_nic ? 'Replace NIC' : 'NIC'}
+                    label={member?.has_nic ? 'Replace NIC' : 'NIC'}
                     error={form.errors.nic}
-                    hint={member.has_nic ? 'A NIC is on file. It is never shown; leave blank to keep it.' : 'No NIC on file.'}
+                    hint={
+                        adding
+                            ? 'Optional. Helps the person prove the record is theirs.'
+                            : member.has_nic
+                              ? 'A NIC is on file. It is never shown; leave blank to keep it.'
+                              : 'No NIC on file.'
+                    }
                 >
                     <Input id="e-nic" autoComplete="off" value={form.data.nic} disabled={form.data.clear_nic} onChange={set('nic')} />
                 </Field>
             </div>
 
-            {member.has_nic && (
+            {member?.has_nic && (
                 <label className="flex items-center gap-2 text-sm">
                     <Checkbox
                         checked={form.data.clear_nic}
@@ -152,13 +171,23 @@ function EditForm({ member, categories, onClose }: { member: EditableMember; cat
                 </label>
             )}
 
+            {adding && (
+                <label className="flex items-start gap-2 text-sm">
+                    <Checkbox className="mt-0.5" checked={form.data.give_number} onCheckedChange={(v) => form.setData('give_number', v === true)} />
+                    <span>
+                        Approve now and give the next membership number
+                        <span className="text-muted-foreground block text-xs">Untick to send them to Applicants for the committee to approve.</span>
+                    </span>
+                </label>
+            )}
+
             <DialogFooter className="gap-2 sm:gap-0">
                 <Button type="button" variant="outline" onClick={onClose} disabled={form.processing}>
                     Cancel
                 </Button>
                 <Button type="submit" disabled={form.processing}>
                     {form.processing && <LoaderCircle className="size-4 animate-spin" />}
-                    Save changes
+                    {member ? 'Save changes' : 'Add member'}
                 </Button>
             </DialogFooter>
         </form>
@@ -183,7 +212,7 @@ export default function EditMemberDialog({ memberId, categories, onClose }: { me
         <Dialog open onOpenChange={(o) => !o && onClose()}>
             <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-2xl">
                 {member ? (
-                    <EditForm member={member} categories={categories} onClose={onClose} />
+                    <MemberForm member={member} categories={categories} onClose={onClose} />
                 ) : (
                     <>
                         <DialogHeader>
@@ -195,6 +224,16 @@ export default function EditMemberDialog({ memberId, categories, onClose }: { me
                         {!failed && <LoaderCircle className="text-muted-foreground mx-auto size-5 animate-spin" />}
                     </>
                 )}
+            </DialogContent>
+        </Dialog>
+    );
+}
+
+export function AddMemberDialog({ categories, onClose }: { categories: string[]; onClose: () => void }) {
+    return (
+        <Dialog open onOpenChange={(o) => !o && onClose()}>
+            <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-2xl">
+                <MemberForm categories={categories} onClose={onClose} />
             </DialogContent>
         </Dialog>
     );

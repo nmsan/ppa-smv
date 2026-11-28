@@ -14,7 +14,7 @@ export default function StatTile({ label, value, detail, trend, tone = 'default'
     const change = trend ? trend.current - trend.previous : 0;
 
     return (
-        <div className={cn('rounded-xl border p-5', tone === 'attention' && 'border-amber-500/50 bg-amber-50 dark:bg-amber-950/30')}>
+        <div className={cn('admin-panel rounded-xl border p-5', tone === 'attention' && 'border-amber-500/50 bg-amber-50 dark:bg-amber-950/30')}>
             <p className="text-muted-foreground text-sm">{label}</p>
             <p className="mt-1 text-3xl font-semibold whitespace-nowrap tabular-nums">{value}</p>
             {trend && (

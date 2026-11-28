@@ -71,7 +71,7 @@ export default function Applicants({ applicants, nextNumber, plans }: { applican
                 {applicants.length === 0 ? (
                     <p className="text-muted-foreground text-sm">No applicants are waiting.</p>
                 ) : (
-                    <div className="overflow-x-auto rounded-lg border">
+                    <div className="admin-panel overflow-x-auto rounded-lg border">
                         <table className="w-full text-sm">
                             <thead className="bg-muted/50 text-left">
                                 <tr>

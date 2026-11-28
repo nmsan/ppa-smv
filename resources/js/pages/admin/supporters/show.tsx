@@ -91,7 +91,7 @@ function RecordContribution({ account, events, today }: { account: Account; even
     const invalid = (k: keyof typeof form.data) => (form.errors[k] ? true : undefined);
 
     return (
-        <form onSubmit={submit} className="space-y-4 rounded-xl border p-5" noValidate>
+        <form onSubmit={submit} className="admin-panel space-y-4 rounded-xl border p-5" noValidate>
             <h2 className="font-semibold">Record a contribution</h2>
             <FormErrorSummary errors={form.errors} action="recorded" />
             <div className="flex gap-2" role="radiogroup" aria-label="Type">
@@ -191,7 +191,7 @@ function MemberLink({ account }: { account: Account }) {
     if (supporter.kind === 'business') return null;
 
     return (
-        <div className="rounded-xl border p-5">
+        <div className="admin-panel rounded-xl border p-5">
             <h2 className="flex items-center gap-2 font-semibold">
                 <Link2 className="size-4" /> Membership
             </h2>
@@ -296,7 +296,7 @@ function SupporterDetails({ account }: { account: Account }) {
     };
 
     return (
-        <form onSubmit={submit} className="space-y-4 rounded-xl border p-5" noValidate>
+        <form onSubmit={submit} className="admin-panel space-y-4 rounded-xl border p-5" noValidate>
             <h2 className="font-semibold">Supporter details</h2>
             <FormErrorSummary errors={form.errors} action="saved" />
             <div className="grid gap-4 sm:grid-cols-2">
@@ -383,7 +383,7 @@ export default function SupporterAccount({ account, events, today }: { account: 
                 <FlashMessage />
 
                 <div className="grid gap-4 md:grid-cols-[18rem_1fr]">
-                    <div className="space-y-3 rounded-xl border p-5">
+                    <div className="admin-panel space-y-3 rounded-xl border p-5">
                         <div>
                             <p className="text-muted-foreground text-sm">Total given</p>
                             <p className="mt-1 text-3xl font-semibold whitespace-nowrap tabular-nums">{lkr(account.total_cents)}</p>
@@ -396,7 +396,7 @@ export default function SupporterAccount({ account, events, today }: { account: 
                         </dl>
                         <p className="text-muted-foreground text-xs">Voided lines are not counted.</p>
                     </div>
-                    <div className="rounded-xl border p-5">
+                    <div className="admin-panel rounded-xl border p-5">
                         <p className="text-muted-foreground mb-3 text-sm">By event or project</p>
                         {account.by_event.length === 0 ? (
                             <p className="text-sm">Nothing recorded yet.</p>
@@ -429,7 +429,7 @@ export default function SupporterAccount({ account, events, today }: { account: 
 
                 <section className="space-y-3">
                     <h2 className="font-semibold">Account history</h2>
-                    <div className="overflow-x-auto rounded-lg border">
+                    <div className="admin-panel overflow-x-auto rounded-lg border">
                         <table className="w-full text-sm">
                             <thead className="bg-muted/50 text-left">
                                 <tr>

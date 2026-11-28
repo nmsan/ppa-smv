@@ -118,6 +118,56 @@ final class Member
     }
 
     /**
+     * The membership secretary enters someone directly, for example a past
+     * pupil who joined at a meeting and does not use the website. With a
+     * membership number they start approved and owe the plan's fee; without
+     * one they wait in the applicants queue like an online request. The
+     * person can later link the record to an account with "Find my record".
+     */
+    public static function addedBySecretary(
+        string $id,
+        MemberDetails $d,
+        MemberProfile $profile,
+        MembershipCategory $category,
+        ?Money $fee,
+        ?MembershipNumber $number,
+        int $addedBy,
+        DateTimeImmutable $now,
+    ): self {
+        $name = trim(preg_replace('/\s+/', ' ', $d->fullName));
+        if ($name === '') {
+            throw new DomainRuleViolation('Full name is required.');
+        }
+
+        $member = new self(
+            $id, null, $name,
+            $d->email ? strtolower(trim($d->email)) : null,
+            $d->phone ? trim($d->phone) : null,
+            $d->nic ? strtoupper(preg_replace('/\s+/', '', $d->nic)) : null,
+            $d->batch, $category,
+            $number ? MembershipStatus::Approved : MembershipStatus::Applied,
+            $number, $now,
+            $number ? $now : null,
+            $number ? $addedBy : null,
+            null,
+            new MemberProfile(
+                gender: $profile->gender,
+                whatsapp: $d->whatsapp ? trim($d->whatsapp) : null,
+                country: $d->country ? trim($d->country) : null,
+                admissionNumber: $profile->admissionNumber ? trim($profile->admissionNumber) : null,
+            ),
+            'secretary',
+            $fee,
+        );
+
+        if ($number) {
+            $member->record(new MemberApproved($id, $number, $addedBy, $now));
+        }
+
+        return $member;
+    }
+
+    /**
      * The committee accepts the request. They may approve it on another plan
      * (for example annual instead of life, under constitution clause 4.3.1);
      * the fee then follows that plan.

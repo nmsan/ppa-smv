@@ -13,6 +13,7 @@ Route::middleware(['auth', 'role:super-admin|membership-secretary|batch-represen
     ->name('admin.')
     ->group(function () {
         Route::get('members', [MemberController::class, 'index'])->name('members.index');
+        Route::post('members', [MemberController::class, 'store'])->name('members.store');
         Route::get('members/{member}', [MemberController::class, 'show'])->name('members.show');
         Route::put('members/{member}', [MemberController::class, 'update'])->name('members.update');
         Route::get('applicants', [ApplicantController::class, 'index'])->name('applicants.index');

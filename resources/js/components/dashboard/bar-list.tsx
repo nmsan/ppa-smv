@@ -22,7 +22,7 @@ export default function BarList({ title, description, items, max, emptyText = 'N
     const top = max ?? Math.max(1, ...items.map((i) => i.value));
 
     return (
-        <section className="rounded-xl border p-5">
+        <section className="admin-panel rounded-xl border p-5">
             <h3 className="font-semibold">{title}</h3>
             {description && <p className="text-muted-foreground mt-1 text-sm">{description}</p>}
             {items.length === 0 ? (

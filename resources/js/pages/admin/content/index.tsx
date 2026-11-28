@@ -28,7 +28,7 @@ export default function ContentIndex({ types }: { types: TypeCard[] }) {
                 <FlashMessage />
                 <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
                     {types.map((t) => (
-                        <div key={t.key} className="flex flex-col rounded-xl border p-5">
+                        <div key={t.key} className="admin-panel flex flex-col rounded-xl border p-5">
                             <div className="flex items-start gap-3">
                                 {t.kind === 'collection' ? (
                                     <List className="text-muted-foreground mt-0.5 size-5" />

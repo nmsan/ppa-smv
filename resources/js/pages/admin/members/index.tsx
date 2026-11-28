@@ -1,4 +1,4 @@
-import EditMemberDialog from '@/components/admin/edit-member-dialog';
+import EditMemberDialog, { AddMemberDialog } from '@/components/admin/edit-member-dialog';
 import FilterSelect from '@/components/admin/filter-select';
 import FlashMessage from '@/components/domain/flash-message';
 import HeadingSmall from '@/components/heading-small';
@@ -13,7 +13,7 @@ import { cn } from '@/lib/utils';
 import { type BreadcrumbItem } from '@/types';
 import { categoryLabel } from '@/types/membership';
 import { Head, router } from '@inertiajs/react';
-import { ArrowDown, ArrowUp, ChevronLeft, ChevronRight, LoaderCircle, Pencil, Phone, Search, SlidersHorizontal, X } from 'lucide-react';
+import { ArrowDown, ArrowUp, ChevronLeft, ChevronRight, LoaderCircle, Pencil, Phone, Plus, Search, SlidersHorizontal, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
 const breadcrumbs: BreadcrumbItem[] = [{ title: 'Members', href: '/admin/members' }];
@@ -109,6 +109,7 @@ export default function Members({ members, options, lockedBatch, filters, status
     const [search, setSearch] = useState(filters.search);
     const [loading, setLoading] = useState(false);
     const [editing, setEditing] = useState<string | null>(null);
+    const [adding, setAdding] = useState(false);
     const firstRender = useRef(true);
 
     const visit = (next: Partial<Filters>, page = 1) => {
@@ -167,17 +168,25 @@ export default function Members({ members, options, lockedBatch, filters, status
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Members" />
             <div className="space-y-6 p-4">
-                <HeadingSmall
-                    title="Members"
-                    description={
-                        lockedBatch
-                            ? `Everyone in the ${lockedBatch} A/L batch: register records, applicants and active members.`
-                            : 'Everyone in the register: imported records, applicants and active members.'
-                    }
-                />
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                    <HeadingSmall
+                        title="Members"
+                        description={
+                            lockedBatch
+                                ? `Everyone in the ${lockedBatch} A/L batch: register records, applicants and active members.`
+                                : 'Everyone in the register: imported records, applicants and active members.'
+                        }
+                    />
+                    {canEdit && (
+                        <Button onClick={() => setAdding(true)}>
+                            <Plus className="size-4" />
+                            Add member
+                        </Button>
+                    )}
+                </div>
                 <FlashMessage />
 
-                <div className="bg-card space-y-3 rounded-xl border p-3 shadow-xs">
+                <div className="admin-panel space-y-3 rounded-xl border p-3">
                     <div className="flex flex-col gap-3 xl:flex-row xl:items-center">
                         <div className="relative flex-1 xl:min-w-80" role="search">
                             <Label htmlFor="member-search" className="sr-only">
@@ -236,6 +245,7 @@ export default function Members({ members, options, lockedBatch, filters, status
                                 options={[
                                     { value: 'register', label: 'Old register' },
                                     { value: 'application', label: 'Online application' },
+                                    { value: 'secretary', label: 'Added by the secretary' },
                                 ]}
                                 onChange={(source) => visit({ source })}
                             />
@@ -271,7 +281,7 @@ export default function Members({ members, options, lockedBatch, filters, status
                         {hasAnyFilter ? 'No member matches these filters. Try a different search or clear the filters.' : 'There are no members yet.'}
                     </div>
                 ) : (
-                    <div className={cn('relative overflow-x-auto rounded-lg border transition-opacity', loading && 'opacity-60')}>
+                    <div className={cn('admin-panel relative overflow-x-auto rounded-lg border transition-opacity', loading && 'opacity-60')}>
                         <table className="w-full text-sm">
                             <thead className="bg-muted/50 text-muted-foreground text-left">
                                 <tr>
@@ -395,6 +405,7 @@ export default function Members({ members, options, lockedBatch, filters, status
                         </div>
                     </nav>
                 )}
+                {adding && <AddMemberDialog categories={categories} onClose={() => setAdding(false)} />}
                 {editing && <EditMemberDialog memberId={editing} categories={categories} onClose={() => setEditing(null)} />}
             </div>
         </AppLayout>

@@ -222,7 +222,7 @@ export default function MembershipPayments({ awaiting, recent, search, channels,
                             {search ? 'No approved member matches.' : 'Nobody is waiting. New approvals appear here.'}
                         </p>
                     ) : (
-                        <div className="overflow-x-auto rounded-lg border">
+                        <div className="admin-panel overflow-x-auto rounded-lg border">
                             <table className="w-full text-sm">
                                 <thead className="bg-muted/50 text-left">
                                     <tr>
@@ -274,7 +274,7 @@ export default function MembershipPayments({ awaiting, recent, search, channels,
                     {recent.length === 0 ? (
                         <p className="text-muted-foreground text-sm">No membership fees recorded yet.</p>
                     ) : (
-                        <div className="overflow-x-auto rounded-lg border">
+                        <div className="admin-panel overflow-x-auto rounded-lg border">
                             <table className="w-full text-sm">
                                 <thead className="bg-muted/50 text-left">
                                     <tr>

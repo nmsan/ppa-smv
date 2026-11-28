@@ -31,7 +31,7 @@ function PlanForm({ plan }: { plan: MembershipPlan }) {
     };
 
     return (
-        <form onSubmit={submit} className="space-y-5 rounded-xl border p-5" noValidate>
+        <form onSubmit={submit} className="admin-panel space-y-5 rounded-xl border p-5" noValidate>
             <div className="flex flex-wrap items-baseline justify-between gap-2">
                 <h2 className="text-lg font-semibold">{plan.recurring ? 'Annual membership' : 'Life membership'}</h2>
                 <p className="text-muted-foreground text-sm">

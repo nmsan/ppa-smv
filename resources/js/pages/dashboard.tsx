@@ -1,3 +1,4 @@
+import SectionLabel from '@/components/admin/section-label';
 import BarList from '@/components/dashboard/bar-list';
 import ColumnChart from '@/components/dashboard/column-chart';
 import StatTile from '@/components/dashboard/stat-tile';
@@ -97,7 +98,7 @@ function Section({ title, aside, children }: { title: string; aside?: React.Reac
     return (
         <section className="space-y-4">
             <div className="flex flex-wrap items-baseline justify-between gap-2">
-                <h2 className="text-sm font-semibold tracking-wide text-neutral-500 uppercase">{title}</h2>
+                <SectionLabel>{title}</SectionLabel>
                 {aside}
             </div>
             {children}
@@ -268,7 +269,7 @@ export default function DashboardPage({ dashboard }: { dashboard: Dashboard }) {
                 </div>
 
                 <div className="grid gap-4 md:grid-cols-2">
-                    <div className="rounded-xl border p-5">
+                    <div className="admin-panel rounded-xl border p-5">
                         <p className="text-muted-foreground text-sm">Your membership</p>
                         {me ? (
                             <>
@@ -287,7 +288,7 @@ export default function DashboardPage({ dashboard }: { dashboard: Dashboard }) {
                             </p>
                         )}
                     </div>
-                    <div className="rounded-xl border p-5">
+                    <div className="admin-panel rounded-xl border p-5">
                         <p className="text-muted-foreground flex items-center gap-2 text-sm">
                             <CalendarDays className="size-4" /> Upcoming events
                         </p>
@@ -314,7 +315,7 @@ export default function DashboardPage({ dashboard }: { dashboard: Dashboard }) {
                 {(activity.length > 0 || roles) && (
                     <div className="grid gap-4 lg:grid-cols-3">
                         {dashboard.activity && (
-                            <section className="rounded-xl border p-5 lg:col-span-2">
+                            <section className="admin-panel rounded-xl border p-5 lg:col-span-2">
                                 <h3 className="flex items-center gap-2 font-semibold">
                                     <Clock className="size-4" /> Recent activity
                                 </h3>
